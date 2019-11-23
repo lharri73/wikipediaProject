@@ -10,7 +10,7 @@ import wget
 import os, glob
 import uuid
 from bs4 import BeautifulSoup
-from wikipediaPage import rootPage
+from wikipediaPage import Page
 
 class Finder:
     def __init__(self):
@@ -27,19 +27,17 @@ class Finder:
         self.title = self.soup.title.string
         index = self.title.find("- Wikipedia")
         self.title = self.title[:index]
-        page = rootPage(self.title, self.soup)
+        page = Page(self.title, self.soup)
         return page
 
     def cleanup(self):
         #make this remove all webpages including the sub pages
-        return 
-        try:
-            os.remove(self.filename)
-        except:
-            pass
+        files = glob.glob("pages/*.webpage")
+        for file in files:
+            os.remove(file)
 
 if __name__ == "__main__":
     finder = Finder()
-    page = finder.get_next_file()
-    finder.get_links(page.soup)
+    # page = finder.get_next_file()
+    # finder.get_links(page.soup)
     finder.cleanup()
