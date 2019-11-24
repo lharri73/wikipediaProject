@@ -18,9 +18,9 @@ class Finder:
     MAX = 3
     def __init__(self):
         self.MAX -=1
-        # self.url = "https://en.wikipedia.org/wiki/Special:Random"
+        self.url = "https://en.wikipedia.org/wiki/Special:Random"
         # self.url = "https://en.wikipedia.org/wiki/World_War_II"
-        self.url = "https://en.wikipedia.org/wiki/United_States"
+        # self.url = "https://en.wikipedia.org/wiki/United_States"
         self.pages_prefix = "pages"
         self.resultsFile = "results/results.csv"
     
