@@ -33,7 +33,7 @@ class Finder:
         index = self.title.find("- Wikipedia")
         self.title = self.title[:index]
         page = Page(self.title, self.soup, self.filename)
-        print("Root: {}".format(page.name))
+        print("Root: {}...".format(page.name), end="")
         return page
 
     def find_hitler(self, n, page, path):
@@ -47,11 +47,12 @@ class Finder:
             return False, path
         
         for link in page.links:
-            if link.title == "Adolf Hitler" or link.title == "Hitler":
-                path.insert(0,link.title)
+            if link.title == "Adolf Hitler":
+                path.insert(0,link.name)
                 print("FOUND HITLER")
                 return True, path
-        if n!= self.MAX:
+
+        if n != self.MAX:
             for link in page.links:
                 nextPage = page.get_sub_page(link)
 
@@ -59,9 +60,9 @@ class Finder:
                     continue
                 res, path = self.find_hitler(level, nextPage, path)
                 if res:
-                    print("Found: TRUE. Title: {}, n: {}".format(link.title, level))
-                    path.insert(0,link.title)
+                    path.insert(0,link.name)
                     return True, path
+
         return False, path
 
     def cleanup(self):
@@ -86,6 +87,7 @@ class Finder:
                 self.write_result(path)
                 print(path)
             else:
+                print("NOT POSSIBLE")
                 self.write_result(["NOT POSSIBLE", page.name])
                 
 
