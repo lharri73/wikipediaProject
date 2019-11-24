@@ -1,0 +1,4 @@
+beautifulsoup4==4.8.1
+soupsieve==1.9.5
+tqdm==4.39.0
+wget==3.2
