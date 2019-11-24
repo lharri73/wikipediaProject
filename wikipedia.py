@@ -7,19 +7,18 @@
 ################################################################################
 
 import wget
-import os, glob
+import os, glob, sys
 import uuid
 from bs4 import BeautifulSoup
 from wikipediaPage import Page
 
 class Finder:
+    MAX = 3
     def __init__(self):
         self.url = "https://en.wikipedia.org/wiki/Special:Random"
-        self.subUrlRoot = "https://en.wikipedia.org"
         self.pages_prefix = "pages"
     
     def get_next_file(self):
-        self.cleanup()
         id = str(uuid.uuid4())
         self.filename = wget.download(self.url, bar=None, out=os.path.join(self.pages_prefix, id + ".webpage"))
         with open(self.filename, "r") as f:
@@ -27,8 +26,13 @@ class Finder:
         self.title = self.soup.title.string
         index = self.title.find("- Wikipedia")
         self.title = self.title[:index]
-        page = Page(self.title, self.soup)
+        page = Page(self.title, self.soup, 0)
         return page
+
+    def find_hitler(self, n, page, path):
+        if page.name == "Adolf Hitler": return True
+        if n == max: return False
+        self.find_hitler(n+1, page, path)
 
     def cleanup(self):
         #make this remove all webpages including the sub pages
@@ -38,6 +42,7 @@ class Finder:
 
 if __name__ == "__main__":
     finder = Finder()
-    # page = finder.get_next_file()
-    # finder.get_links(page.soup)
-    finder.cleanup()
+    if len(sys.argv) != 1 and sys.argv[1] == "clean":
+        finder.cleanup()
+    else:
+        page = finder.get_next_file()
