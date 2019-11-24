@@ -11,12 +11,18 @@ import os, glob, sys
 import uuid
 from bs4 import BeautifulSoup
 from wikipediaPage import Page
+import copy
+import csv
 
 class Finder:
     MAX = 3
     def __init__(self):
-        self.url = "https://en.wikipedia.org/wiki/Special:Random"
+        self.MAX -=1
+        # self.url = "https://en.wikipedia.org/wiki/Special:Random"
+        # self.url = "https://en.wikipedia.org/wiki/World_War_II"
+        self.url = "https://en.wikipedia.org/wiki/United_States"
         self.pages_prefix = "pages"
+        self.resultsFile = "results/results.csv"
     
     def get_next_file(self):
         id = str(uuid.uuid4())
@@ -26,23 +32,69 @@ class Finder:
         self.title = self.soup.title.string
         index = self.title.find("- Wikipedia")
         self.title = self.title[:index]
-        page = Page(self.title, self.soup, 0)
+        page = Page(self.title, self.soup, self.filename)
+        print("Root: {}".format(page.name))
         return page
 
     def find_hitler(self, n, page, path):
-        if page.name == "Adolf Hitler": return True
-        if n == max: return False
-        self.find_hitler(n+1, page, path)
+        level = copy.deepcopy(n+1)
+        if page.name == "Adolf Hitler": 
+            print("FOUND HILTER")
+            path.insert(0,"Adolf Hitler")
+            return True, path
+
+        if n > self.MAX: 
+            return False, path
+        
+        for link in page.links:
+            if link.title == "Adolf Hitler" or link.title == "Hitler":
+                path.insert(0,link.title)
+                print("FOUND HITLER")
+                return True, path
+        if n!= self.MAX:
+            for link in page.links:
+                nextPage = page.get_sub_page(link)
+
+                if nextPage is None:
+                    continue
+                res, path = self.find_hitler(level, nextPage, path)
+                if res:
+                    print("Found: TRUE. Title: {}, n: {}".format(link.title, level))
+                    path.insert(0,link.title)
+                    return True, path
+        return False, path
 
     def cleanup(self):
         #make this remove all webpages including the sub pages
-        files = glob.glob("pages/*.webpage")
+        files = glob.glob("pages/*")
+        print("cleaning {} files".format(len(files)))
         for file in files:
             os.remove(file)
+
+    def write_result(self, results):
+        with open(self.resultsFile, "a", newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(results)
+
+    def begin(self):
+        while True:
+            self.cleanup()
+            page = self.get_next_file()
+            res, path = self.find_hitler(0,page, [])
+            if(res):
+                path.insert(0,page.name)
+                self.write_result(path)
+                print(path)
+            else:
+                self.write_result(["NOT POSSIBLE", page.name])
+                
 
 if __name__ == "__main__":
     finder = Finder()
     if len(sys.argv) != 1 and sys.argv[1] == "clean":
         finder.cleanup()
-    else:
-        page = finder.get_next_file()
+        exit()
+    finder.begin()
+
+
+
