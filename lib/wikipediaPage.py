@@ -6,7 +6,7 @@
 ## Copyright (c) 2019                                                         ##
 ################################################################################
 
-from wikipediaLink import Link
+from .wikipediaLink import Link
 from tqdm import tqdm
 import uuid
 import wget
@@ -31,8 +31,9 @@ class Page:
     def get_sub_page(self, subLink):
         id = str(uuid.uuid4())
         try:
-            subFileName = wget.download(subLink.href, bar=None, out=os.path.join(self.pages_prefix,id + ".webpage"))
-        except Exception:
+            subFileName = wget.download(subLink.href, bar=None, out=os.path.join(self.pages_prefix, id + ".webpage"))
+        except Exception as e:
+            print(e)
             page = None
         else:
             with open(subFileName, "r") as f:
@@ -40,7 +41,7 @@ class Page:
             title = soup.title.string
             index = title.find("- Wikipedia")
             title = title[:index]
-            page = Page(title, soup, subFileName)
+            page = Page(title, soup, os.path.abspath(subFileName))
         return page
 
     def get_links(self, soup):

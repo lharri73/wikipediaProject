@@ -10,7 +10,7 @@ import wget
 import os, glob, sys
 import uuid
 from bs4 import BeautifulSoup
-from wikipediaPage import Page
+from lib.wikipediaPage import Page
 import copy
 import csv
 
@@ -32,12 +32,17 @@ class Finder:
         self.title = self.soup.title.string
         index = self.title.find("- Wikipedia")
         self.title = self.title[:index]
-        page = Page(self.title, self.soup, self.filename)
+        page = Page(self.title, self.soup, os.path.abspath(self.filename))
         print("Root: {}...".format(page.name), end="")
         return page
 
     def find_hitler(self, n, page, path):
+        
+        # we must make a copy of the variable because of python's terrible
+        # pass by reference for EVERYTHING
         level = copy.deepcopy(n+1)
+        
+        # base case
         if page.name == "Adolf Hitler": 
             print("FOUND HILTER")
             path.insert(0,"Adolf Hitler")
@@ -47,6 +52,8 @@ class Finder:
             return False, path
         
         for link in page.links:
+            # we go through every link and see if it links to
+            # the page we're looking for
             if link.title == "Adolf Hitler":
                 path.insert(0,link.name)
                 print("FOUND HITLER")
@@ -55,9 +62,9 @@ class Finder:
         if n != self.MAX:
             for link in page.links:
                 nextPage = page.get_sub_page(link)
-
                 if nextPage is None:
                     continue
+
                 res, path = self.find_hitler(level, nextPage, path)
                 if res:
                     path.insert(0,link.name)
@@ -66,13 +73,13 @@ class Finder:
         return False, path
 
     def cleanup(self):
-        #make this remove all webpages including the sub pages
         files = glob.glob("pages/*")
         print("cleaning {} files".format(len(files)))
         for file in files:
             os.remove(file)
 
     def write_result(self, results):
+        #TODO: make this thread-safe
         with open(self.resultsFile, "a", newline='') as f:
             writer = csv.writer(f)
             writer.writerow(results)
@@ -81,8 +88,12 @@ class Finder:
         while True:
             self.cleanup()
             page = self.get_next_file()
+            if page is None:
+                continue
+
             res, path = self.find_hitler(0,page, [])
-            if(res):
+
+            if res:
                 path.insert(0,page.name)
                 self.write_result(path)
                 print(path)
@@ -97,6 +108,3 @@ if __name__ == "__main__":
         finder.cleanup()
         exit()
     finder.begin()
-
-
-
