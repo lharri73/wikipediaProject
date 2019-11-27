@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-################################################################################
-## Date Created  : November 22rd, 2019                                        ##
-## Authors       : Landon Harris                                              ##
-## Last Modified : November 23rd, 2019                                        ##
-## Copyright (c) 2019                                                         ##
-################################################################################
-
 import wget
 import os, glob, sys
 import uuid
@@ -14,13 +6,24 @@ from lib.wikipediaPage import Page
 import copy
 import csv
 
+def main():
+    if len(sys.argv) < 3:
+        print('usage: python {} "goal_page_name" max_depth'.format(sys.argv[0]))
+        exit(1)
+    
+    if len(sys.argv) == 2 and sys.argv[1] == "clean":
+        finder.cleanup()
+        exit()
+
+    finder = Finder(sys.argv[1], sys.argv[2])
+    finder.begin()
+
 class Finder:
-    MAX = 3
-    def __init__(self):
-        self.MAX -=1
+    def __init__(self, search_for, max_n):
+        self.MAX = max_n-1
+        self.goal_page = search_for
         self.url = "https://en.wikipedia.org/wiki/Special:Random"
-        # self.url = "https://en.wikipedia.org/wiki/World_War_II"
-        # self.url = "https://en.wikipedia.org/wiki/United_States"
+
         self.pages_prefix = "pages"
         self.resultsFile = "results/results.csv"
     
@@ -43,9 +46,9 @@ class Finder:
         level = copy.deepcopy(n+1)
         
         # base case
-        if page.name == "Adolf Hitler": 
-            print("FOUND HILTER")
-            path.insert(0,"Adolf Hitler")
+        if page.name == self.goal_page: 
+            print("FOUND {}".format{self.goal_page})
+            path.insert(0,self.goal_page)
             return True, path
 
         if n > self.MAX: 
@@ -54,9 +57,9 @@ class Finder:
         for link in page.links:
             # we go through every link and see if it links to
             # the page we're looking for
-            if link.title == "Adolf Hitler":
-                path.insert(0,link.name)
-                print("FOUND HITLER")
+            if link.title == self.goal_page:
+                path.insert(0,link.title)
+                print("FOUND {}".format{self.goal_page})
                 return True, path
 
         if n != self.MAX:
@@ -67,7 +70,7 @@ class Finder:
 
                 res, path = self.find_hitler(level, nextPage, path)
                 if res:
-                    path.insert(0,link.name)
+                    path.insert(0,link.title)
                     return True, path
 
         return False, path
@@ -101,10 +104,5 @@ class Finder:
                 print("NOT POSSIBLE")
                 self.write_result(["NOT POSSIBLE", page.name])
                 
-
 if __name__ == "__main__":
-    finder = Finder()
-    if len(sys.argv) != 1 and sys.argv[1] == "clean":
-        finder.cleanup()
-        exit()
-    finder.begin()
+    main()

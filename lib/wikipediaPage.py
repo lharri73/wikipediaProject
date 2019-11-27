@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-################################################################################
-## Date Created  : November 23rd, 2019                                        ##
-## Authors       : Landon Harris                                              ##
-## Last Modified : November 23rd, 2019                                        ##
-## Copyright (c) 2019                                                         ##
-################################################################################
-
 from .wikipediaLink import Link
 from tqdm import tqdm
 import uuid
@@ -56,17 +48,7 @@ class Page:
                     self.links.append(Link(link))
             except KeyError:
                 continue
-    
-    def get_all_files(self):
-        raise DeprecationWarning("dont use")
-        badLinks = []
-        for link in tqdm(self.links):
-            if(not self.get_sub_page(link)):
-                badLinks.append(link)
-        
-        # remove badLinks from self.links
-        self.links = [x for x in self.links if x not in badLinks]
 
     def __repr__(self):
-        return self.name
+        return "Page: {}".format(self.name)
         
