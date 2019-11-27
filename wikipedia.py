@@ -47,7 +47,7 @@ class Finder:
         
         # base case
         if page.name == self.goal_page: 
-            print("FOUND {}".format{self.goal_page})
+            print("FOUND {}".format(self.goal_page))
             path.insert(0,self.goal_page)
             return True, path
 
@@ -59,7 +59,7 @@ class Finder:
             # the page we're looking for
             if link.title == self.goal_page:
                 path.insert(0,link.title)
-                print("FOUND {}".format{self.goal_page})
+                print("FOUND {}".format(self.goal_page))
                 return True, path
 
         if n != self.MAX:
