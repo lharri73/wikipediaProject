@@ -15,7 +15,7 @@ def main():
         finder.cleanup()
         exit()
 
-    finder = Finder(sys.argv[1], sys.argv[2])
+    finder = Finder(sys.argv[1], int(sys.argv[2]))
     finder.begin()
 
 class Finder:
