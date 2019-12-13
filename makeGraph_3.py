@@ -18,7 +18,9 @@ class GraphMaker:
             "third": {}
         }
         self.net = Network(height="100vh", width="100%", bgcolor="#222222", font_color="white")
+        self.net.force_atlas_2based()
         self.file = file
+        self.size = 0
 
     def make_graph(self):
         self._find_sizes()
@@ -29,7 +31,8 @@ class GraphMaker:
     def _find_sizes(self):
         with open(self.file, "r") as csvFile:
             reader = csv.reader(csvFile)
-            for row in reader:
+            for row in tqdm(reader, desc="Reading csv File", unit="Lines"):
+                self.size+=1
                 if len(row) == 2 and row[0] == "NOT POSSIBLE":
                     continue
                 elif len(row) == 2:
@@ -72,19 +75,38 @@ class GraphMaker:
                     raise Exception("Bad CSV file")
     
     def _make_nodes(self):
+
+        pbar2 = tqdm(total=len(self.click_list["root"]), desc="Root Nodes", unit="Nodes")
         for name in self.click_list["root"]:
             self.net.add_node(name, label=name, shape="dot", value=100)
+            pbar2.update(1)
+        pbar2.close()
+
+        pbar2 = tqdm(total=len(self.click_list["first"]), desc="First Click Nodes", unit="Nodes", position=0)
         for name, size in self.click_list["first"].items():
             self.net.add_node(name, label=name + " " + str(size), shape="dot", value=size*100, color="#59ff6a")
+            pbar2.update(1)
+        pbar2.close()
+
+        pbar2 = tqdm(total=len(self.click_list["second"]), desc="Second Click Nodes", unit="Nodes", position=0)
         for name, size in self.click_list["second"].items():
             self.net.add_node(name, label=name + " " + str(size), shape="dot", value=size*100, color="#fcb335")    
+            pbar2.update(1)
+        pbar2.close()
+
+        pbar2 = tqdm(total=len(self.click_list["third"]), desc="Third Click Nodes", unit="Nodes", position=0)
         for name, size in self.click_list["third"].items():
             self.net.add_node(name, label=name + " " + str(size), shape="dot", value=size*100, color="#eb4034")
+            pbar2.update(1)
+        pbar2.close()
+
 
     def _add_edges(self):
         with open(self.file, "r") as csvFile:
             reader = csv.reader(csvFile)
+            pbar = tqdm(total=self.size, desc="Adding Connections", unit="Edges")
             for row in reader:
+                pbar.update(1)
                 if len(row) == 2 and row[0] == "NOT POSSIBLE":
                     continue
                 elif len(row) == 2:
@@ -96,11 +118,10 @@ class GraphMaker:
                     self.net.add_edge(row[0], row[1])
                     self.net.add_edge(row[1], row[2])
                     self.net.add_edge(row[2], row[3])
-
+            pbar.close()
     def show_map(self):
         # self.net.show_buttons()
-        self.net.toggle_physics(False)
-        self.net.show("jesus.html")
+        self.net.show("hitler.html")
 
 
 if __name__ == "__main__":
