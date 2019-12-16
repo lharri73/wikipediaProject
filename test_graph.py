@@ -45,14 +45,7 @@ class Node:
         assert self.pos_set, "Position of node must be set before the node can be drawn."
         radius = int(self.node_radius*self.adjustment_val)
         image.add_circle(self.pos, radius, self.colors[self.clickLevel])
-        # image.circle.append([(self.pos[0],self.pos[1]), radius, self.colors[self.clickLevel]])
         image.add_text(self.name, (self.pos[0],self.pos[1] +radius +self.textOffset))
-        # image.text.append([self.name, center_text_position(self.name, (self.pos[0],self.pos[1] +radius +self.textOffset),fontScale=fontScale),
-                    # cv2.FONT_HERSHEY_SIMPLEX, fontScale, (255,255,255)])
-        # cv2.circle(image, (self.pos[0],self.pos[1]), self.node_radius, self.colors[self.clickLevel], thickness=-1)
-        # cv2.putText(image, self.name, center_text_position(self.name, (self.pos[0],self.pos[1] +self.node_radius +self.textOffset),fontScale=fontScale),
-        #             cv2.FONT_HERSHEY_SIMPLEX, fontScale, (255,255,255))
-        # cv2.putText()
 
 class GraphMaker:
     def __init__(self, file):
