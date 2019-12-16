@@ -3,5 +3,5 @@
 __pycache__/
 .DS_Store
 *.tar
-images/
+images/*
 !images/.keep
