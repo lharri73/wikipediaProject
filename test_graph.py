@@ -8,6 +8,7 @@ import sys
 from tqdm import tqdm
 import cv2
 from sklearn.preprocessing import normalize
+from lib.bigImage import tiledImage
 
 def main():
     maker = GraphMaker(sys.argv[1])
@@ -43,31 +44,15 @@ class Node:
         fontScale=.5
         assert self.pos_set, "Position of node must be set before the node can be drawn."
         radius = int(self.node_radius*self.adjustment_val)
-        image.circle.append([(self.pos[0],self.pos[1]), radius, self.colors[self.clickLevel]])
-        image.text.append([self.name, center_text_position(self.name, (self.pos[0],self.pos[1] +radius +self.textOffset),fontScale=fontScale),
-                    cv2.FONT_HERSHEY_SIMPLEX, fontScale, (255,255,255)])
+        image.add_circle(self.pos, radius, self.colors[self.clickLevel])
+        # image.circle.append([(self.pos[0],self.pos[1]), radius, self.colors[self.clickLevel]])
+        image.add_text(self.name, (self.pos[0],self.pos[1] +radius +self.textOffset))
+        # image.text.append([self.name, center_text_position(self.name, (self.pos[0],self.pos[1] +radius +self.textOffset),fontScale=fontScale),
+                    # cv2.FONT_HERSHEY_SIMPLEX, fontScale, (255,255,255)])
         # cv2.circle(image, (self.pos[0],self.pos[1]), self.node_radius, self.colors[self.clickLevel], thickness=-1)
         # cv2.putText(image, self.name, center_text_position(self.name, (self.pos[0],self.pos[1] +self.node_radius +self.textOffset),fontScale=fontScale),
         #             cv2.FONT_HERSHEY_SIMPLEX, fontScale, (255,255,255))
         # cv2.putText()
-
-class Image:
-    image_border=20
-    def __init__(self, width, height):
-        self._img = numpy.zeros((height+self.image_border, width+self.image_border,3), dtype=numpy.uint8)
-        self.text = []
-        self.circle = []
-        self.edges = []
-
-    def write(self):
-        for edge in tqdm(self.edges, desc="edges"):
-            self._img = cv2.line(self._img, edge[0], edge[1], edge[2], edge[3])
-        for circle in tqdm(self.circle, desc="circles"):
-            self._img = cv2.circle(self._img, circle[0], circle[1], circle[2], thickness=-1)
-        for text in tqdm(self.text, desc="text"):
-            self._img = cv2.putText(self._img, text[0], text[1], text[2], text[3], text[4])
-            
-        cv2.imwrite("images/image.png",self._img)#, [cv2.IMWRITE_JPEG_QUALITY, 50])
 
 class GraphMaker:
     def __init__(self, file):
@@ -223,7 +208,7 @@ class GraphMaker:
         width=multiply_up(x_range, 10)
         height=multiply_up(y_range,10)
         # self.img = numpy.zeros((height+self.image_border, width+self.image_border,3), dtype=numpy.uint8)
-        self.img = Image(width, height)
+        self.img = tiledImage(width, height)
         
         for node in self.nodes:
             node.adjustment_val = node_connections[0,int(self.nodeMap[node.name])]
@@ -248,7 +233,8 @@ class GraphMaker:
         self.img.write()
 
     def add_edge(self, node1, node2):
-        self.img.edges.append([node1.pos, node2.pos, (100,100,100), 1])
+        # self.img.edges.append([node1.pos, node2.pos, (100,100,100), 1])
+        self.img.add_line(node1.pos, node2.pos)
         node1.draw(self.img)
         node2.draw(self.img)
 
@@ -263,20 +249,6 @@ def multiply_up(i, factor, power=1):
     i += 10-(i%(10**power))
     i *= factor
     return int(i)
-
-def center_text_position(text, org, fontScale=1,font=cv2.FONT_HERSHEY_SIMPLEX):
-    assert type(org)==tuple, "org must be a tuple, got {}".format(type(org))
-
-    # get boundary of this text
-    textsize = cv2.getTextSize(text, font, 1, 2)[0]
-
-    # get coords based on boundary
-    textX = int(org[0] - textsize[0]/(2*1/fontScale))
-    textY = int(org[1] + textsize[1] / (2*1/fontScale))
-
-    # add text centered on image
-    ret = (textX, textY)
-    return ret
 
 def linear_ext(pos, size, dims):
     #(x_min, x_max, y_min, y_max), (width, height)
