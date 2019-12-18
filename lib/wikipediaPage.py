@@ -13,11 +13,13 @@ class Page:
         self.soup = soup
 
         self.subPages = {}
+        self.fileNames = []
         self.links = []
 
         self.get_links(soup)
 
     def addPage(self, name, fileName,soup):
+        raise DeprecationWarning("I don't think subpages is used")
         self.subPages.update({name:{"file":fileName, "soup":soup}})
 
     def get_sub_page(self, subLink):
@@ -33,6 +35,7 @@ class Page:
             index = title.find("- Wikipedia")
             title = title[:index]
             page = Page(title, soup, os.path.abspath(subFileName))
+            self.fileNames.append({"file": subFileName, "page": page})
         return page
 
     def get_links(self, soup):
@@ -48,9 +51,16 @@ class Page:
             except KeyError:
                 continue
 
-    def cleanup(self):
-        for name in self.subPages.keys():
-            os.remove(self.subPages[name]["file"])
+    def cleanup(self, final=True):
+        num_files = 0
+        for dict_object in self.fileNames:
+            num_files += dict_object["page"].cleanup(final=False)
+            os.remove(dict_object["file"])
+        if final:
+            print("Cleaned {} files".format(len(self.fileNames) + 1 + num_files))
+            return
+        else:
+            return (len(self.fileNames)+1)
 
     def __repr__(self):
         return "Page: {}".format(self.name)

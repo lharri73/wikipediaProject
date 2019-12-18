@@ -25,9 +25,9 @@ def main():
     print("Started {} processes".format(len(processes)))
 
     try:
-        with open("results/results.csv", "a", newline='') as f:
-            writer = csv.writer(f)
-            while True:
+        while True:
+            with open("results/results.csv", "a", newline='') as f:
+                writer = csv.writer(f)
                 res = queue.get()
                 print(res)
                 writer.writerow(res)
@@ -45,7 +45,7 @@ class Finder:
         self.MAX = max_n-1
         self.goal_page = search_for
         self.url = "https://en.wikipedia.org/wiki/Special:Random"
-        # self.url = "https://en.wikipedia.org/wiki/World_War_II"
+        # self.url = "https://en.wikipedia.org/wiki/United_States"
 
         self.pages_prefix = "pages"
         self.resultsFile = "results/results.csv"
@@ -111,7 +111,7 @@ class Finder:
         self.queue.put(results)
 
     def begin(self):
-        while True:
+        for i in range(1):
             # self.cleanup()
             page = self.get_next_file()
             if page is None:
