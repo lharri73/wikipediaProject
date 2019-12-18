@@ -44,8 +44,8 @@ class Finder:
     def __init__(self, search_for, max_n, q):
         self.MAX = max_n-1
         self.goal_page = search_for
-        # self.url = "https://en.wikipedia.org/wiki/Special:Random"
-        self.url = "https://en.wikipedia.org/wiki/World_War_II"
+        self.url = "https://en.wikipedia.org/wiki/Special:Random"
+        # self.url = "https://en.wikipedia.org/wiki/World_War_II"
 
         self.pages_prefix = "pages"
         self.resultsFile = "results/results.csv"
