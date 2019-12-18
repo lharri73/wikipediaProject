@@ -111,7 +111,7 @@ class Finder:
         self.queue.put(results)
 
     def begin(self):
-        for i in range(1):
+        while True:
             # self.cleanup()
             page = self.get_next_file()
             if page is None:
