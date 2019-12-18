@@ -28,12 +28,9 @@ def main():
         with open("results/results.csv", "a", newline='') as f:
             writer = csv.writer(f)
             while True:
-                if not queue.empty:
-                    res = queue.get()
-                    writer.writerow(res)
-                else:
-                    time.sleep(0.5)
-                    continue
+                res = queue.get()
+                print(res)
+                writer.writerow(res)
     except KeyboardInterrupt:
         self.cleanup()
     # finder = Finder(sys.argv[1], int(sys.argv[2]))
@@ -112,9 +109,6 @@ class Finder:
     def write_result(self, results):
         #TODO: make this thread-safe
         self.queue.put(results)
-        # with open(self.resultsFile, "a", newline='') as f:
-        #     writer = csv.writer(f)
-        #     writer.writerow(results)
 
     def begin(self):
         while True:
@@ -128,9 +122,7 @@ class Finder:
             if res:
                 path.insert(0,page.name)
                 self.write_result(path)
-                print(path)
             else:
-                print("NOT POSSIBLE")
                 self.write_result(["NOT POSSIBLE", page.name])
             page.cleanup()
             os.remove(os.path.join("pages",page.fileName))
