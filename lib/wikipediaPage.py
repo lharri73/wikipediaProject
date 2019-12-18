@@ -4,6 +4,7 @@ import uuid
 import wget
 import os
 from bs4 import BeautifulSoup
+import gc
 class Page:
     subUrlRoot = "https://en.wikipedia.org"
     pages_prefix = "pages"
@@ -56,6 +57,7 @@ class Page:
         for dict_object in self.fileNames:
             num_files += dict_object["page"].cleanup(final=False)
             os.remove(dict_object["file"])
+            gc.collect(dict_object["page"])
         if final:
             print("Cleaned {} files".format(len(self.fileNames) + 1 + num_files))
             return

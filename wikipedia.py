@@ -1,5 +1,5 @@
 import wget
-import os, glob, sys, time
+import os, glob, sys, time, gc
 import uuid
 from bs4 import BeautifulSoup
 from lib.wikipediaPage import Page
@@ -8,13 +8,12 @@ import csv
 import multiprocessing
 
 def main():
-    if len(sys.argv) < 3:
-        print('usage: python {} "goal_page_name" max_depth'.format(sys.argv[0]))
-        exit(1)
-    
     if len(sys.argv) == 2 and sys.argv[1] == "clean":
-        finder.cleanup()
-        exit()
+        cleanup()
+        exit(0)
+    if len(sys.argv) < 3:
+        print('USAGE: python {} "goal_page_name" max_depth\n       python {} clean'.format(sys.argv[0], sys.argv[0]))
+        exit(1)
 
     queue = multiprocessing.Queue()
     processes = []
@@ -32,13 +31,18 @@ def main():
                 print(res)
                 writer.writerow(res)
     except KeyboardInterrupt:
-        self.cleanup()
-    # finder = Finder(sys.argv[1], int(sys.argv[2]))
-    # finder.begin()
+        cleanup()
+
 
 def multi_start(search_for, max_n, q):
     finder = Finder(search_for, max_n, q)
     finder.begin()
+
+def cleanup():
+    files = glob.glob("pages/*")
+    print("cleaning {} files".format(len(files)))
+    for file in files:
+        os.remove(file)
 
 class Finder:
     def __init__(self, search_for, max_n, q):
@@ -101,13 +105,13 @@ class Finder:
         return False, path
 
     def cleanup(self):
+        # raise DeprecationWarning("This will interfere with other threads and should not be run")
         files = glob.glob("pages/*")
         print("cleaning {} files".format(len(files)))
         for file in files:
             os.remove(file)
 
     def write_result(self, results):
-        #TODO: make this thread-safe
         self.queue.put(results)
 
     def begin(self):
@@ -126,6 +130,7 @@ class Finder:
                 self.write_result(["NOT POSSIBLE", page.name])
             page.cleanup()
             os.remove(os.path.join("pages",page.fileName))
+            gc.collect(page)
                 
 if __name__ == "__main__":
     main()
