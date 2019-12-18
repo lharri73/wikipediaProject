@@ -48,9 +48,9 @@ class Page:
             except KeyError:
                 continue
 
-        def cleanup(self):
-            for name in self.subPages.keys():
-                os.remove(self.subPages[name]["file"])
+    def cleanup(self):
+        for name in self.subPages.keys():
+            os.remove(self.subPages[name]["file"])
 
     def __repr__(self):
         return "Page: {}".format(self.name)
