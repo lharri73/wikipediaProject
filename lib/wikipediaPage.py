@@ -25,7 +25,6 @@ class Page:
         try:
             subFileName = wget.download(subLink.href, bar=None, out=os.path.join(self.pages_prefix, id + ".webpage"))
         except Exception as e:
-            print(e)
             page = None
         else:
             with open(subFileName, "r") as f:
@@ -48,6 +47,10 @@ class Page:
                     self.links.append(Link(link))
             except KeyError:
                 continue
+
+        def cleanup(self):
+            for name in self.subPages.keys():
+                os.remove(self.subPages[name]["file"])
 
     def __repr__(self):
         return "Page: {}".format(self.name)

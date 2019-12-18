@@ -1,10 +1,11 @@
 import wget
-import os, glob, sys
+import os, glob, sys, time
 import uuid
 from bs4 import BeautifulSoup
 from lib.wikipediaPage import Page
 import copy
 import csv
+import multiprocessing
 
 def main():
     if len(sys.argv) < 3:
@@ -15,17 +16,44 @@ def main():
         finder.cleanup()
         exit()
 
-    finder = Finder(sys.argv[1], int(sys.argv[2]))
+    queue = multiprocessing.Queue()
+    processes = []
+    for i in range(multiprocessing.cpu_count()):
+        p = multiprocessing.Process(target=multi_start, args=(sys.argv[1], int(sys.argv[2]), queue))
+        p.start()
+        processes.append(p)
+    print("Started {} processes".format(len(processes)))
+
+    try:
+        with open("results/results.csv", "a", newline='') as f:
+            writer = csv.writer(f)
+            while True:
+                if not queue.empty:
+                    res = queue.get()
+                    writer.writerow(res)
+                else:
+                    time.sleep(0.5)
+                    continue
+    except KeyboardInterrupt:
+        self.cleanup()
+    # finder = Finder(sys.argv[1], int(sys.argv[2]))
+    # finder.begin()
+
+def multi_start(search_for, max_n, q):
+    finder = Finder(search_for, max_n, q)
     finder.begin()
 
 class Finder:
-    def __init__(self, search_for, max_n):
+    def __init__(self, search_for, max_n, q):
         self.MAX = max_n-1
         self.goal_page = search_for
-        self.url = "https://en.wikipedia.org/wiki/Special:Random"
+        # self.url = "https://en.wikipedia.org/wiki/Special:Random"
+        self.url = "https://en.wikipedia.org/wiki/World_War_II"
 
         self.pages_prefix = "pages"
         self.resultsFile = "results/results.csv"
+        self.queue = q
+        print("started process {}".format(os.getpid()))
     
     def get_next_file(self):
         id = str(uuid.uuid4())
@@ -36,7 +64,7 @@ class Finder:
         index = self.title.find("- Wikipedia")
         self.title = self.title[:index]
         page = Page(self.title, self.soup, os.path.abspath(self.filename))
-        print("Root: {}...".format(page.name), end="")
+        print("Root: {}...".format(page.name))
         return page
 
     def find_hitler(self, n, page, path):
@@ -83,13 +111,14 @@ class Finder:
 
     def write_result(self, results):
         #TODO: make this thread-safe
-        with open(self.resultsFile, "a", newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow(results)
+        self.queue.put(results)
+        # with open(self.resultsFile, "a", newline='') as f:
+        #     writer = csv.writer(f)
+        #     writer.writerow(results)
 
     def begin(self):
         while True:
-            self.cleanup()
+            # self.cleanup()
             page = self.get_next_file()
             if page is None:
                 continue
@@ -103,6 +132,8 @@ class Finder:
             else:
                 print("NOT POSSIBLE")
                 self.write_result(["NOT POSSIBLE", page.name])
+            page.cleanup()
+            os.remove(os.path.join("pages",page.fileName))
                 
 if __name__ == "__main__":
     main()
