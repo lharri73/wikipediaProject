@@ -6,3 +6,6 @@ __pycache__/
 images/*
 !images/.keep
 pages/
+bin/
+obj/
+
