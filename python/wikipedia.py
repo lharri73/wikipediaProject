@@ -116,7 +116,6 @@ class Finder:
 
     def begin(self):
         while True:
-            # self.cleanup()
             page = self.get_next_file()
             if page is None:
                 continue
@@ -131,6 +130,7 @@ class Finder:
             page.cleanup()
             os.remove(os.path.join("pages",page.fileName))
             del page
+            gc.collect()
                 
 if __name__ == "__main__":
     main()
