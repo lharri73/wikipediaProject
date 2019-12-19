@@ -130,7 +130,7 @@ class Finder:
                 self.write_result(["NOT POSSIBLE", page.name])
             page.cleanup()
             os.remove(os.path.join("pages",page.fileName))
-            gc.collect(page)
+            del page
                 
 if __name__ == "__main__":
     main()
