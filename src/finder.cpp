@@ -13,7 +13,9 @@ Finder::Finder(string search_for, int max_n){
 Finder::~Finder(){
     //TODO: does this need to delete pages?
 }
-Page Finder::get_next_file(){
+Page* Finder::get_next_file(){
+    delete current_page;
+
     string root_page = pages_folder + "/" + gen_uuid() + ".webpage";
                                                               // wget prints a lot of garbage
     string command="wget -O " + root_page + " " +random_url + " >/dev/null 2>&1";
@@ -35,9 +37,10 @@ Page Finder::get_next_file(){
     GumboOutput* output = gumbo_parse(contents.c_str());
 
     const string title = find_title(output->root);
-    cout << "output " <<  title << '\n';
-    gumbo_destroy_output(&kGumboDefaultOptions, output);
-    return Page("");
+    Page *cur_page = new Page(title, output, root_page);
+    printf("Root: %s...\n",cur_page->name.c_str());
+    current_page = cur_page;
+    return cur_page;
 }
 bool Finder::find_hitler_recursive(int n, Page page, string *path){
     (void) n;

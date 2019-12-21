@@ -1,6 +1,7 @@
 {
     "python.pythonPath": "/Users/landon/.virtualenvs/wikipedia/bin/python",
     "files.associations": {
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "string": "cpp"
     }
 }

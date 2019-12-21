@@ -10,7 +10,7 @@ all: bin/wikipedia \
 # "make clean" deletes the object files and binaries
 
 clean:
-	rm -f obj/* bin/*
+	rm -f obj/* bin/* pages/*
 # -------------------------
 # Object files
 
