@@ -1,11 +1,10 @@
 CFLAGS ?= -std=c++98 -g -Wall -Wextra -Iinclude
+LFLAGS := $(shell pkg-config --libs gumbo)
 
-# -------------------------
-# This means that when you just type "make", you make all of the executables
+# ------------------------
+# "make binaries" generates all required binaries
 
-ALL = bin/wikipedia \
-
-all: $(ALL)
+all: bin/wikipedia \
 
 # -------------------------
 # "make clean" deletes the object files and binaries
@@ -24,8 +23,10 @@ obj/wiki_page.o: src/wiki_page.cpp include/wikipedia.hpp
 obj/wikipedia.o: src/wikipedia.cpp include/wikipedia.hpp
 	g++ $(CFLAGS) -c -o obj/wikipedia.o src/wikipedia.cpp
 
+obj/finder.o: src/finder.cpp include/wikipedia.hpp
+	g++ $(CFLAGS) -c -o obj/finder.o src/finder.cpp
 # -------------------------
 # Executables
 
-bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o
-	g++ $(CFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o
+bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o
+	g++ $(CFLAGS) $(LFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o
