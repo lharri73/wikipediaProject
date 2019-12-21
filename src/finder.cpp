@@ -1,8 +1,6 @@
 #include "wikipedia.hpp"
 using namespace std;
 
-static const string find_title(const GumboNode* root);
-
 Finder::Finder(string search_for, int max_n){
     MAX = max_n-1;
     goal_page = search_for;
@@ -11,7 +9,7 @@ Finder::Finder(string search_for, int max_n){
     random_url = "https://en.wikipedia.org/wiki/Special:Random";
 }
 Finder::~Finder(){
-    //TODO: does this need to delete pages?
+    delete current_page;
 }
 Page* Finder::get_next_file(){
     delete current_page;
@@ -25,7 +23,7 @@ Page* Finder::get_next_file(){
     ifstream in(root_page, ios::in | ios::binary);
     if (!in) {
         std::cout << "File " << root_page << " not found!\n";
-        exit(EXIT_FAILURE);
+        exit(-1);
     }
 
     string contents;
@@ -37,45 +35,49 @@ Page* Finder::get_next_file(){
     GumboOutput* output = gumbo_parse(contents.c_str());
 
     const string title = find_title(output->root);
-    Page *cur_page = new Page(title, output, root_page);
+    Page *cur_page = new Page(title, output, root_page, pages_folder);
     printf("Root: %s...\n",cur_page->name.c_str());
     current_page = cur_page;
     return cur_page;
 }
-bool Finder::find_hitler_recursive(int n, Page page, string *path){
-    (void) n;
-    (void) page;
-    (void) path;
+bool Finder::find_hitler_recursive(int n, Page *page, string *path){
+    if(n > MAX) return false;
+
+    // base case
+    if(page->name == goal_page){
+        printf("FOUND %s", goal_page.c_str());
+        *path = goal_page + *path;
+        return true;
+    }
+
+    for(size_t i = 0; i < page->links.size(); i++){
+        if(page->links[i].get_title() == goal_page){
+            printf("FOUND %s", goal_page.c_str());
+            *path = page->links[i].get_title() + *path;
+            return true;
+        }
+    }
+   // don't do this on the last iteration
+   Page* nextPage;
+   if(n != MAX){
+       for(size_t i = 0; i < page->links.size(); i++){
+           nextPage = page->get_sub_page(page->links[i]);
+           if(nextPage->name == "") continue;
+           if(find_hitler_recursive(++n, nextPage, path)){
+               *path = page->links[i].get_title() + *path;
+               return true;
+           }
+       }
+   }
     return false;
 }
 void Finder::write_result(string result){
     (void) result;
 }
 
-static const string find_title(const GumboNode* root) {
-
-  const GumboVector* root_children = &root->v.element.children;
-  GumboNode* head = NULL;
-  for (size_t i = 0; i < root_children->length; i++) {
-    GumboNode* child = (GumboNode*) root_children->data[i];
-    if (child->type == GUMBO_NODE_ELEMENT &&
-        child->v.element.tag == GUMBO_TAG_HEAD) {
-      head = child;
-      break;
-    }
-  }
-
-  GumboVector* head_children = &head->v.element.children;
-  for (size_t i = 0; i < head_children->length; i++) {
-    GumboNode* child = (GumboNode*) head_children->data[i];
-    if (child->type == GUMBO_NODE_ELEMENT &&
-        child->v.element.tag == GUMBO_TAG_TITLE) {
-        GumboNode* title_text = (GumboNode*) child->v.element.children.data[0];
-        string result = title_text->v.text.text;
-        size_t trailed_pos = result.find(" - Wikipedia");
-        result.resize(trailed_pos);
-        return result;
-    }
-  }
-  return "<no title found>";
+void Finder::begin(){
+    string *path = new string("");
+    bool result;
+    result = find_hitler_recursive(MAX, get_next_file(), path);
+    printf("result: %d\npath: '%s'\n", result,path->c_str());
 }

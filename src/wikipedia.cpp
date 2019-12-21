@@ -14,7 +14,7 @@ int main(int argc, char** argv){
     }
 
     Finder finder = Finder(string(argv[1]), stoi(argv[2]));
-    finder.get_next_file();
+    finder.begin();
 
     return 0;
 }
@@ -50,4 +50,32 @@ string gen_uuid(){
      */
     uuid_unparse(binuuid, uuid);
     return uuid;
+}
+
+const string find_title(const GumboNode* root) {
+
+  const GumboVector* root_children = &root->v.element.children;
+  GumboNode* head = NULL;
+  for (size_t i = 0; i < root_children->length; i++) {
+    GumboNode* child = (GumboNode*) root_children->data[i];
+    if (child->type == GUMBO_NODE_ELEMENT &&
+        child->v.element.tag == GUMBO_TAG_HEAD) {
+      head = child;
+      break;
+    }
+  }
+
+  GumboVector* head_children = &head->v.element.children;
+  for (size_t i = 0; i < head_children->length; i++) {
+    GumboNode* child = (GumboNode*) head_children->data[i];
+    if (child->type == GUMBO_NODE_ELEMENT &&
+        child->v.element.tag == GUMBO_TAG_TITLE) {
+        GumboNode* title_text = (GumboNode*) child->v.element.children.data[0];
+        string result = title_text->v.text.text;
+        size_t trailed_pos = result.find(" - Wikipedia");
+        result.resize(trailed_pos);
+        return result;
+    }
+  }
+  return "<no title found>";
 }

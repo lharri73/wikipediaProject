@@ -5,6 +5,7 @@
 
 #include <uuid/uuid.h>
 #include <cstdio>
+// #include <stdio.h>
 #include <stdlib.h> 
 #include <cstdlib>
 
@@ -26,14 +27,20 @@ class Link{
 
 class Page{
     public:
-        Page(std::string page_name, GumboOutput *output, std::string filename);
+        Page(std::string page_name, GumboOutput *output, std::string filename, std::string pages_folder);
         ~Page();
+
+        Page* get_sub_page(Link link);
+
         std::string name;
+        std::vector <Link> links;
     protected:
         void get_links();
         GumboOutput *output;
         std::string fileName;
-        std::vector <Link> links;
+
+        std::string pages_folder;
+        std::vector <Page*> pages;
     private:
         bool get_links_recursive(GumboNode *node);
 };
@@ -43,7 +50,7 @@ class Finder{
         Finder(std::string search_for, int max_n);
         ~Finder();
         Page *get_next_file();
-        bool find_hitler_recursive(int n, Page page, std::string *path);
+        bool find_hitler_recursive(int n, Page* page, std::string *path);
         void write_result(std::string result);
 
         void begin();
@@ -61,3 +68,4 @@ class Finder{
 };
 
 std::string gen_uuid();
+const std::string find_title(const GumboNode* root);

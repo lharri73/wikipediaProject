@@ -1,14 +1,19 @@
 #include "wikipedia.hpp"
 using namespace std;
-Page::Page(string page_name, GumboOutput* Output, string Filename){
+Page::Page(string page_name, GumboOutput* Output, string Filename, string pageFolder){
     name = page_name;
     output = Output;
     fileName = Filename;
+    pages_folder = pageFolder;
     get_links();
 }
 
 Page::~Page(){
     gumbo_destroy_output(&kGumboDefaultOptions, output);
+    for(size_t i = 0; i < pages.size(); i++){
+        delete pages[i];
+    }
+    remove(fileName.c_str());
 }
 
 void Page::get_links(){
@@ -51,4 +56,31 @@ bool Page::get_links_recursive(GumboNode *node){
     }
   }
   return true;
+}
+
+Page* Page::get_sub_page(Link link){
+    string root_page = pages_folder + "/" + gen_uuid() + ".webpage";
+                                                              // wget prints a lot of garbage
+    string command="wget -O " + root_page + " " + link.get_href() + " >/dev/null 2>&1";
+    system((const char*)command.c_str());
+    // const char* filename = argv[1];
+
+    ifstream in(root_page, ios::in | ios::binary);
+    if (!in) {
+        std::cout << "File " << root_page << " not found!\n";
+        exit(EXIT_FAILURE);
+    }
+
+    string contents;
+    in.seekg(0, ios::end);
+    contents.resize(in.tellg());
+    in.seekg(0, ios::beg);
+    in.read(&contents[0], contents.size());
+    in.close();
+    GumboOutput* output = gumbo_parse(contents.c_str());
+
+    const string title = find_title(output->root);
+    Page *cur_page = new Page(title, output, root_page, pages_folder);
+    pages.push_back(cur_page);
+    return cur_page;
 }
