@@ -7,6 +7,8 @@ images/*
 !images/.keep
 pages/*
 !pages/.keep
-bin/
-obj/
+bin/*
+!bin/.keep
+obj/*
+!obj/.keep
 
