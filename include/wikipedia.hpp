@@ -64,6 +64,8 @@ class Finder{
         std::string pages_folder;
         std::string results_file;
 
+        int write_tries;
+
         Page* current_page;
 
 };

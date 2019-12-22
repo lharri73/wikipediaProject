@@ -9,7 +9,9 @@ Finder::Finder(string search_for, int max_n, string resultsFile){
     random_url = "https://en.wikipedia.org/wiki/Special:Random";
     // random_url = "https://en.wikipedia.org/wiki/United_States";
     // random_url = "https://en.wikipedia.org/wiki/World_war";
+    
     hasRun = false;
+    write_tries = 0;
 }
 Finder::~Finder(){
     delete current_page;
@@ -49,14 +51,12 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
 
     // base case
     if(page->name == goal_page){
-        printf("FOUND %s\n", goal_page.c_str());
         path[n+1] = goal_page;
         return true;
     }
 
     for(size_t i = 0; i < page->links.size(); i++){
         if(page->links[i].get_title() == goal_page){
-            printf("FOUND %s\n", goal_page.c_str());
             path[n+1] = page->links[i].get_title();
             return true;
         }
@@ -76,34 +76,47 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
     return false;
 }
 void Finder::write_result(string* result){
+    if(write_tries == 5) {
+        cerr << "Bad results file\n";
+        exit(-1);
+    }
     ofstream fout;
     fout.open(results_file.c_str(), ios_base::app);
+    if(!fout){
+        cerr << "NOT BEING WRITTEN TO " << results_file;
+        string fileName = gen_uuid();
+        cerr << "\n RESULTS now being saved to " << file_name << ".csv";
+        results_file = file_name + ".csv";
+        write_result(result);
+        write_tries++;
+        return;
+    }
     for(int i = 0; i < 4; i++){
-        if (result[i].find(',' != string::npos)){
-            fout << '"' << result[i] << '"';
-        }else{
-            fout << result[i];
-        }
+        fout << '"' << result[i] << '"';
         if(i == 3){
             fout << '\n';
         }else{
             fout << ',';
         }
     }
+    write_tries = 0;
 }
 
 void Finder::begin(){
-    string path[4];
-    bool result;
-    Page *page = get_next_file();
-    result = find_hitler_recursive(0, page, path);
-    if(result){
-        printf("path: ['%s', '%s', '%s', '%s']\n", page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
-        write_result(path);
-    }else{
-        path[0] = "NOT POSSIBLE";
-        path[1] = page->name;
-        write_result(path);
+    while(true){
+        string path[4];
+        bool result;
+        Page *page = get_next_file();
+        result = find_hitler_recursive(0, page, path);
+        if(result){
+            printf("FOUND: ['%s', '%s', '%s', '%s']\n", page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
+            path[0] = page->name.c_str();
+            write_result(path);
+        }else{
+            path[0] = "NOT POSSIBLE";
+            path[1] = page->name;
+            write_result(path);
+        }
     }
 
 }
