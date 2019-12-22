@@ -57,6 +57,7 @@ class Finder{
 
         std::string file_name;
     protected:
+        bool hasRun;
         int MAX;
         std::string goal_page;
         std::string random_url;

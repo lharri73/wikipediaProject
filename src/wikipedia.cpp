@@ -20,6 +20,7 @@ int main(int argc, char** argv){
 }
 
 void cleanup(){
+    
     glob_t glob_result;
     glob("pages/*",GLOB_TILDE,NULL,&glob_result);
     for(unsigned int i=0; i<glob_result.gl_pathc; ++i){

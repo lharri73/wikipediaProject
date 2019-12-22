@@ -1,6 +1,7 @@
 #include "wikipedia.hpp"
 using namespace std;
 Page::Page(string page_name, GumboOutput* Output, string Filename, string pageFolder){
+    cout << page_name << '\n';
     name = page_name;
     output = Output;
     fileName = Filename;
@@ -9,18 +10,16 @@ Page::Page(string page_name, GumboOutput* Output, string Filename, string pageFo
 }
 
 Page::~Page(){
-    gumbo_destroy_output(&kGumboDefaultOptions, output);
+//    gumbo_destroy_output(&kGumboDefaultOptions, output);
     for(size_t i = 0; i < pages.size(); i++){
         delete pages[i];
     }
+    cout << "removeing " << fileName << '\n';
     remove(fileName.c_str());
 }
 
 void Page::get_links(){
     get_links_recursive(output->root);
-    // for(size_t i = 0; i < links.size(); i++){
-    //     cout << links[i].get_href() << '\n';
-    // }
 }
 
 bool Page::get_links_recursive(GumboNode *node){
@@ -44,24 +43,24 @@ bool Page::get_links_recursive(GumboNode *node){
                result.find("Templage:") == string::npos && \
                result.find("File:") == string::npos && \
                result.find("/wiki/") == 0){
-                   GumboAttribute* title = gumbo_get_attribute(&node->v.element.attributes, "title");
-                   links.push_back(Link(href->value, title->value));
+                GumboAttribute* title = gumbo_get_attribute(&node->v.element.attributes, "title");
+                links.push_back(Link(href->value, title->value));
             }
     }
 
-  GumboVector* children = &node->v.element.children;
-  for (unsigned int i = 0; i < children->length; ++i) {
-    if(!get_links_recursive(static_cast<GumboNode*>(children->data[i]))){
-        return false;
+    GumboVector* children = &node->v.element.children;
+    for (unsigned int i = 0; i < children->length; ++i) {
+        if(!get_links_recursive(static_cast<GumboNode*>(children->data[i]))){
+            return false;
+        }
     }
-  }
-  return true;
+    return true;
 }
 
 Page* Page::get_sub_page(Link link){
     string root_page = pages_folder + "/" + gen_uuid() + ".webpage";
-                                                              // wget prints a lot of garbage
-    string command="wget -O " + root_page + " " + link.get_href() + " >/dev/null 2>&1";
+                                                        // wget prints a lot of garbage
+    string command="wget -q -O " + root_page + " '" + link.get_href() + "' >/dev/null 2>&1";
     system((const char*)command.c_str());
     // const char* filename = argv[1];
 

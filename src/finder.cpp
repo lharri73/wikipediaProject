@@ -7,12 +7,16 @@ Finder::Finder(string search_for, int max_n){
     pages_folder = "pages";
     results_file = "results/results.csv";
     random_url = "https://en.wikipedia.org/wiki/Special:Random";
+    // random_url = "https://en.wikipedia.org/wiki/United_States";
+    // random_url = "https://en.wikipedia.org/wiki/World_war";
+    hasRun = false;
 }
 Finder::~Finder(){
     delete current_page;
 }
 Page* Finder::get_next_file(){
-    delete current_page;
+    if(hasRun)  delete current_page;
+    hasRun = true;
 
     string root_page = pages_folder + "/" + gen_uuid() + ".webpage";
                                                               // wget prints a lot of garbage
@@ -45,15 +49,17 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
 
     // base case
     if(page->name == goal_page){
-        printf("FOUND %s", goal_page.c_str());
-        *path = goal_page + *path;
+        printf("FOUND %s\n", goal_page.c_str());
+        path[n+1] = goal_page;
+        // *path = goal_page + *path;
         return true;
     }
 
     for(size_t i = 0; i < page->links.size(); i++){
         if(page->links[i].get_title() == goal_page){
-            printf("FOUND %s", goal_page.c_str());
-            *path = page->links[i].get_title() + *path;
+            printf("FOUND %s\n", goal_page.c_str());
+            path[n+1] = page->links[i].get_title();
+            // *path = page->links[i].get_title() + *path;
             return true;
         }
     }
@@ -63,8 +69,9 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
        for(size_t i = 0; i < page->links.size(); i++){
            nextPage = page->get_sub_page(page->links[i]);
            if(nextPage->name == "") continue;
-           if(find_hitler_recursive(++n, nextPage, path)){
-               *path = page->links[i].get_title() + *path;
+           if(find_hitler_recursive(n+1, nextPage, path)){
+            //    *path = page->links[i].get_title() + *path;
+               path[n+1] = page->links[i].get_title();
                return true;
            }
        }
@@ -76,8 +83,14 @@ void Finder::write_result(string result){
 }
 
 void Finder::begin(){
-    string *path = new string("");
+    string path[4];
     bool result;
-    result = find_hitler_recursive(MAX, get_next_file(), path);
-    printf("result: %d\npath: '%s'\n", result,path->c_str());
+    Page *page = get_next_file();
+    result = find_hitler_recursive(0, get_next_file(), path);
+    if(result){
+        printf("path: ['%s', '%s', '%s', '%s']\n", result, page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
+    }else{
+        printf("NOT FOUND: %s\n", page->name.c_str());
+    }
+
 }
