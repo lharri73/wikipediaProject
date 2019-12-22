@@ -86,7 +86,7 @@ void Finder::begin(){
     string path[4];
     bool result;
     Page *page = get_next_file();
-    result = find_hitler_recursive(0, get_next_file(), path);
+    result = find_hitler_recursive(0, page, path);
     if(result){
         printf("path: ['%s', '%s', '%s', '%s']\n", page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
     }else{
