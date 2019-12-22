@@ -65,7 +65,7 @@ Page* Page::get_sub_page(Link link){
     system((const char*)command.c_str());
     // const char* filename = argv[1];
 
-    ifstream in(root_page, ios::in | ios::binary);
+    ifstream in(root_page.c_str(), ios::in | ios::binary);
     if (!in) {
         std::cout << "File " << root_page << " not found!\n";
         exit(EXIT_FAILURE);
