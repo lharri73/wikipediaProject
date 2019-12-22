@@ -20,13 +20,13 @@ Page* Finder::get_next_file(){
 
     string root_page = pages_folder + "/" + gen_uuid() + ".webpage";
                                                               // wget prints a lot of garbage
-    string command="wget -O " + root_page + " " +random_url + " >/dev/null 2>&1";
+    string command="wget -O " + root_page + " '" +random_url + "' >/dev/null 2>&1";
     system((const char*)command.c_str());
     // const char* filename = argv[1];
 
     ifstream in(root_page.c_str(), ios::in | ios::binary);
     if (!in) {
-        std::cout << "File " << root_page << " not found!\n";
+        std::cerr << "get_next_file: File " << root_page << " not found!\n";
         exit(-1);
     }
 
@@ -51,7 +51,6 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
     if(page->name == goal_page){
         printf("FOUND %s\n", goal_page.c_str());
         path[n+1] = goal_page;
-        // *path = goal_page + *path;
         return true;
     }
 
@@ -59,7 +58,6 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
         if(page->links[i].get_title() == goal_page){
             printf("FOUND %s\n", goal_page.c_str());
             path[n+1] = page->links[i].get_title();
-            // *path = page->links[i].get_title() + *path;
             return true;
         }
     }
@@ -70,7 +68,6 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
            nextPage = page->get_sub_page(page->links[i]);
            if(nextPage->name == "") continue;
            if(find_hitler_recursive(n+1, nextPage, path)){
-            //    *path = page->links[i].get_title() + *path;
                path[n+1] = page->links[i].get_title();
                return true;
            }

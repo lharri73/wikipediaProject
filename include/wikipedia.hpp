@@ -5,13 +5,13 @@
 
 #include <uuid/uuid.h>
 #include <cstdio>
-// #include <stdio.h>
 #include <stdlib.h> 
 #include <cstdlib>
 
 #include "gumbo.h"
 #include <fstream>
 #include <ios>
+#include <signal.h>
 
 #include <vector>
 

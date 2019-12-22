@@ -13,7 +13,6 @@ Page::~Page(){
     for(size_t i = 0; i < pages.size(); i++){
         delete pages[i];
     }
-    cout << "removeing " << fileName << '\n';
     remove(fileName.c_str());
 }
 
@@ -65,7 +64,7 @@ Page* Page::get_sub_page(Link link){
 
     ifstream in(root_page.c_str(), ios::in | ios::binary);
     if (!in) {
-        std::cout << "File " << root_page << " not found!\n";
+        std::cerr << "get_sub_page: File " << root_page << " not found!\n";
         exit(EXIT_FAILURE);
     }
 

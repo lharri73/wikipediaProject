@@ -2,9 +2,10 @@
 using namespace std;
 
 void cleanup();
+void sigint_cleanup(int signal);
 
 int main(int argc, char** argv){
-
+    signal(SIGINT, sigint_cleanup);
     if(argc == 2 && string(argv[1])=="clean"){
         cleanup();
         exit(0);
@@ -20,7 +21,7 @@ int main(int argc, char** argv){
 }
 
 void cleanup(){
-    
+
     glob_t glob_result;
     glob("pages/*",GLOB_TILDE,NULL,&glob_result);
     for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
@@ -55,28 +56,34 @@ string gen_uuid(){
 
 const string find_title(const GumboNode* root) {
 
-  const GumboVector* root_children = &root->v.element.children;
-  GumboNode* head = NULL;
-  for (size_t i = 0; i < root_children->length; i++) {
-    GumboNode* child = (GumboNode*) root_children->data[i];
-    if (child->type == GUMBO_NODE_ELEMENT &&
-        child->v.element.tag == GUMBO_TAG_HEAD) {
-      head = child;
-      break;
+    const GumboVector* root_children = &root->v.element.children;
+    GumboNode* head = NULL;
+    for (size_t i = 0; i < root_children->length; i++) {
+        GumboNode* child = (GumboNode*) root_children->data[i];
+        if (child->type == GUMBO_NODE_ELEMENT &&
+            child->v.element.tag == GUMBO_TAG_HEAD) {
+            head = child;
+            break;
+        }
     }
-  }
 
-  GumboVector* head_children = &head->v.element.children;
-  for (size_t i = 0; i < head_children->length; i++) {
-    GumboNode* child = (GumboNode*) head_children->data[i];
-    if (child->type == GUMBO_NODE_ELEMENT &&
-        child->v.element.tag == GUMBO_TAG_TITLE) {
-        GumboNode* title_text = (GumboNode*) child->v.element.children.data[0];
-        string result = title_text->v.text.text;
-        size_t trailed_pos = result.find(" - Wikipedia");
-        result.resize(trailed_pos);
-        return result;
+    GumboVector* head_children = &head->v.element.children;
+    for (size_t i = 0; i < head_children->length; i++) {
+        GumboNode* child = (GumboNode*) head_children->data[i];
+        if (child->type == GUMBO_NODE_ELEMENT &&
+            child->v.element.tag == GUMBO_TAG_TITLE) {
+            GumboNode* title_text = (GumboNode*) child->v.element.children.data[0];
+            string result = title_text->v.text.text;
+            size_t trailed_pos = result.find(" - Wikipedia");
+            result.resize(trailed_pos);
+            return result;
+        }
     }
-  }
-  return "<no title found>";
+    return "<no title found>";
+}
+
+void sigint_cleanup(int signal){
+    (void) signal;
+    cleanup();
+    exit(1);
 }
