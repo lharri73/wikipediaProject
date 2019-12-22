@@ -1,7 +1,6 @@
 #include "wikipedia.hpp"
 using namespace std;
 Page::Page(string page_name, GumboOutput* Output, string Filename, string pageFolder){
-    cout << page_name << '\n';
     name = page_name;
     output = Output;
     fileName = Filename;
