@@ -14,7 +14,7 @@ int main(int argc, char** argv){
         exit(1);
     }
 
-    Finder finder = Finder(string(argv[1]), atoi(argv[2]));
+    Finder finder = Finder(string(argv[1]), atoi(argv[2]), "results/results.csv");
     finder.begin();
 
     return 0;

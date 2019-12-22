@@ -1,11 +1,11 @@
 #include "wikipedia.hpp"
 using namespace std;
 
-Finder::Finder(string search_for, int max_n){
+Finder::Finder(string search_for, int max_n, string resultsFile){
     MAX = max_n-1;
     goal_page = search_for;
     pages_folder = "pages";
-    results_file = "results/results.csv";
+    results_file = resultsFile;
     random_url = "https://en.wikipedia.org/wiki/Special:Random";
     // random_url = "https://en.wikipedia.org/wiki/United_States";
     // random_url = "https://en.wikipedia.org/wiki/World_war";
@@ -75,8 +75,21 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
    }
     return false;
 }
-void Finder::write_result(string result){
-    (void) result;
+void Finder::write_result(string* result){
+    ofstream fout;
+    fout.open(results_file.c_str(), ios_base::app);
+    for(int i = 0; i < 4; i++){
+        if (result[i].find(',' != string::npos)){
+            fout << '"' << result[i] << '"';
+        }else{
+            fout << result[i];
+        }
+        if(i == 3){
+            fout << '\n';
+        }else{
+            fout << ',';
+        }
+    }
 }
 
 void Finder::begin(){
@@ -86,8 +99,11 @@ void Finder::begin(){
     result = find_hitler_recursive(0, page, path);
     if(result){
         printf("path: ['%s', '%s', '%s', '%s']\n", page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
+        write_result(path);
     }else{
-        printf("NOT FOUND: %s\n", page->name.c_str());
+        path[0] = "NOT POSSIBLE";
+        path[1] = page->name;
+        write_result(path);
     }
 
 }
