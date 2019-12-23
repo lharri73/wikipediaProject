@@ -28,8 +28,9 @@ int main(int argc, char** argv){
     for(size_t i =0; i < concurentThreadsSupported; i++){
         threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
     }
-    threads[concurentThreadsSupported-1].join();
-    exit(10);
+    for(size_t i = 0; i < threads.size(); i++){
+        threads[i].join();
+    }
 
     // multithread_start(string(argv[1]), atoi(argv[2]));
 
@@ -37,9 +38,10 @@ int main(int argc, char** argv){
 }
 
 void multithread_start(string goal_page, int max_depth){
-    Finder finder = Finder(goal_page, max_depth, "results/results.csv");
-    while(gSignalStatus != 2 && !finder.sigInt){
+    while(gSignalStatus != 2){
+        Finder finder(goal_page, max_depth, "results/results.csv");
         finder.begin();
+        if(finder.sigInt) break;
     }
 }
 
