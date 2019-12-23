@@ -1,6 +1,6 @@
 #include "wikipedia.hpp"
 using namespace std;
-
+mutex g_pages_mutex;
 Finder::Finder(string search_for, int max_n, string resultsFile){
     
     MAX = max_n-1;
@@ -12,7 +12,6 @@ Finder::Finder(string search_for, int max_n, string resultsFile){
     // random_url = "https://en.wikipedia.org/wiki/World_war";
     
     hasRun = false;
-    write_tries = 0;
 
     sigInt = false;
 }
@@ -57,7 +56,6 @@ Page* Finder::get_next_file(){
 bool Finder::find_hitler_recursive(int n, Page *page, string *path){
     if(sigInt) return false;
     if(n > MAX) return false;
-    // if(gSignalStatus == 2) return false;
 
     // base case
     if(page->name == goal_page){
@@ -78,7 +76,6 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
             try{
                 nextPage = page->get_sub_page(page->links[i]);
             }catch(string s){
-                cout << "exiting...\n";
                 sigInt = true;
                 return false;
             }
@@ -93,22 +90,16 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
     return false;
 }
 void Finder::write_result(string* result){
-    if(write_tries == 5) {
-        cerr << "Bad results file\n";
-        exit(-1);
-    }
     ofstream fout;
     fout.open(results_file.c_str(), ios_base::app);
+
+    lock_guard<mutex> guard(g_pages_mutex);
+
     if(!fout){
-        cerr << "NOT BEING WRITTEN TO " << results_file;
-        uuid thisUUID;
-        string fileName = thisUUID.uuid_string();
-        cerr << "\n RESULTS now being saved to " << file_name << ".csv";
-        results_file = file_name + ".csv";
-        write_result(result);
-        write_tries++;
-        return;
+        cerr << "BAD RESULTS FILE\n " << results_file;
+        exit(2);
     }
+
     for(int i = 0; i < 4; i++){
         fout << '"' << result[i] << '"';
         if(i == 3){
@@ -117,7 +108,6 @@ void Finder::write_result(string* result){
             fout << ',';
         }
     }
-    write_tries = 0;
 }
 
 void Finder::begin(){

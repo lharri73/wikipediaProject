@@ -16,6 +16,9 @@
 #include <vector>
 
 #include <thread>
+#include <unistd.h>
+#include <mutex>
+
 
 class Link{
     public:
@@ -68,11 +71,7 @@ class Finder{
         std::string pages_folder;
         std::string results_file;
 
-        int write_tries;
-
         Page* current_page;
-
-
 };
 
 class uuid{
