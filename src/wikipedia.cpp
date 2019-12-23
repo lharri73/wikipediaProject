@@ -3,7 +3,14 @@ using namespace std;
 
 void cleanup();
 void multithread_start(string goa_page, int max_depth);
+
+volatile sig_atomic_t gSignalStatus = 0;
+void signal_handler(int signal){
+    gSignalStatus = signal;
+}
+
 int main(int argc, char** argv){
+    signal(SIGINT, signal_handler);
     if(argc == 2 && string(argv[1])=="clean"){
         cleanup();
         exit(0);
@@ -12,61 +19,36 @@ int main(int argc, char** argv){
         exit(1);
     }
 
-    // vector<thread> threads;
-    // unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
+    vector<thread> threads;
+    unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
 
-    // if(concurentThreadsSupported == 0) concurentThreadsSupported = 1; // will return 0 if unable to detect
+    if(concurentThreadsSupported == 0) concurentThreadsSupported = 1; // will return 0 if unable to detect
 
-    // for(size_t i =0; i < concurentThreadsSupported; i++){
-    //     threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
-    // }
-    // threads[concurentThreadsSupported-1].join();
-    // exit(10);
+    for(size_t i =0; i < concurentThreadsSupported; i++){
+        threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
+    }
+    threads[concurentThreadsSupported-1].join();
+    exit(10);
 
-    multithread_start(string(argv[1]), atoi(argv[2]));
+    // multithread_start(string(argv[1]), atoi(argv[2]));
 
     return 0;
 }
 
 void multithread_start(string goal_page, int max_depth){
     Finder finder = Finder(goal_page, max_depth, "results/results.csv");
-    finder.begin();
+    while(gSignalStatus != 2 && !finder.sigInt){
+        finder.begin();
+    }
 }
 
 void cleanup(){
-
     glob_t glob_result;
     glob("pages/*",GLOB_TILDE,NULL,&glob_result);
     for(unsigned int i=0; i<glob_result.gl_pathc; ++i){
         if(string(glob_result.gl_pathv[i]) == "pages/.keep") continue;
         remove(glob_result.gl_pathv[i]);
     }
-}
-
-string gen_uuid(){
-        uuid_t binuuid;
-    /*
-     * Generate a UUID. We're not done yet, though,
-     * for the UUID generated is in binary format 
-     * (hence the variable name). We must 'unparse' 
-     * binuuid to get a usable 36-character string.
-     */
-    uuid_generate_random(binuuid);
-
-    /*
-     * uuid_unparse() doesn't allocate memory for itself, so do that with
-     * malloc(). 37 is the length of a UUID (36 characters), plus '\0'.
-     */
-    char *uuid = (char*)malloc(37);
-
-    /*
-     * Produces a UUID string at uuid consisting of letters
-     * whose case depends on the system's locale.
-     */
-    uuid_unparse(binuuid, uuid);
-    string uuidS = uuid; // this is bad
-    free(uuid);
-    return uuidS;
 }
 
 const string find_title(const GumboNode* root) {
@@ -96,4 +78,3 @@ const string find_title(const GumboNode* root) {
     }
     return "<no title found>";
 }
-

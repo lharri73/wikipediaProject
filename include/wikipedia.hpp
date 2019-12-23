@@ -58,6 +58,7 @@ class Finder{
         void begin();
 
         std::string file_name;
+        bool sigInt;
     protected:
         void sigint(int signal);
         bool hasRun;
@@ -71,7 +72,17 @@ class Finder{
 
         Page* current_page;
 
+
 };
 
-std::string gen_uuid();
+class uuid{
+    public:
+        uuid();
+        ~uuid();
+        const std::string uuid_string() const;
+    private:
+        char* generated_uuid;
+};
+
 const std::string find_title(const GumboNode* root);
+void handler(int sig);

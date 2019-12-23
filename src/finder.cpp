@@ -13,19 +13,26 @@ Finder::Finder(string search_for, int max_n, string resultsFile){
     
     hasRun = false;
     write_tries = 0;
+
+    sigInt = false;
 }
 Finder::~Finder(){
     delete current_page;
 }
 Page* Finder::get_next_file(){
-    if(hasRun)  delete current_page;
+    if(hasRun && !sigInt)  delete current_page;
     hasRun = true;
 
-    string root_page = pages_folder + "/" + gen_uuid() + ".webpage";
+    uuid thisUUID;
+
+    string root_page = pages_folder + "/" + thisUUID.uuid_string() + ".webpage";
                                                               // wget prints a lot of garbage
     string command="wget -O " + root_page + " '" +random_url + "' >/dev/null 2>&1";
-    system((const char*)command.c_str());
-    // const char* filename = argv[1];
+    int system_result = system((const char*)command.c_str());
+
+    if(system_result != 0){
+        throw (string) "sigint detected";
+    }
 
     ifstream in(root_page.c_str(), ios::in | ios::binary);
     if (!in) {
@@ -48,7 +55,9 @@ Page* Finder::get_next_file(){
     return cur_page;
 }
 bool Finder::find_hitler_recursive(int n, Page *page, string *path){
+    if(sigInt) return false;
     if(n > MAX) return false;
+    // if(gSignalStatus == 2) return false;
 
     // base case
     if(page->name == goal_page){
@@ -65,12 +74,19 @@ bool Finder::find_hitler_recursive(int n, Page *page, string *path){
    // don't do this on the last iteration
    Page* nextPage;
    if(n != MAX){
-       for(size_t i = 0; i < page->links.size(); i++){
-           nextPage = page->get_sub_page(page->links[i]);
-           if(nextPage->name == "") continue;
-           if(find_hitler_recursive(n+1, nextPage, path)){
-               path[n+1] = page->links[i].get_title();
-               return true;
+       for(size_t i = 0; i < page->links.size() && !sigInt; i++){
+            try{
+                nextPage = page->get_sub_page(page->links[i]);
+            }catch(string s){
+                cout << "exiting...\n";
+                sigInt = true;
+                return false;
+            }
+
+            if(nextPage->name == "") continue;
+            if(find_hitler_recursive(n+1, nextPage, path)){
+                path[n+1] = page->links[i].get_title();
+                return true;
            }
        }
    }
@@ -85,7 +101,8 @@ void Finder::write_result(string* result){
     fout.open(results_file.c_str(), ios_base::app);
     if(!fout){
         cerr << "NOT BEING WRITTEN TO " << results_file;
-        string fileName = gen_uuid();
+        uuid thisUUID;
+        string fileName = thisUUID.uuid_string();
         cerr << "\n RESULTS now being saved to " << file_name << ".csv";
         results_file = file_name + ".csv";
         write_result(result);
@@ -106,7 +123,12 @@ void Finder::write_result(string* result){
 void Finder::begin(){
     string path[4];
     bool result;
-    Page *page = get_next_file();
+    Page *page;
+    try{
+        page = get_next_file();
+    }catch(string s){
+        return;
+    }
     result = find_hitler_recursive(0, page, path);
 
     if(result){
@@ -116,7 +138,8 @@ void Finder::begin(){
     }else{
         path[0] = "NOT POSSIBLE";
         path[1] = page->name;
-        write_result(path);
+        if(!sigInt)
+            write_result(path);
     }
 }
 void Finder::sigint(int signal){

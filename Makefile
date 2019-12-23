@@ -25,8 +25,11 @@ obj/wikipedia.o: src/wikipedia.cpp include/wikipedia.hpp
 
 obj/finder.o: src/finder.cpp include/wikipedia.hpp
 	g++ $(CFLAGS) -c -o obj/finder.o src/finder.cpp
+
+obj/uuid.o: src/uuid.cpp include/wikipedia.hpp
+	g++ $(CFLAGS) -c -o obj/uuid.o src/uuid.cpp
 # -------------------------
 # Executables
 
-bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o
-	g++ $(CFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o -luuid -lgumbo -pthread
+bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o
+	g++ $(CFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o -luuid -lgumbo -pthread

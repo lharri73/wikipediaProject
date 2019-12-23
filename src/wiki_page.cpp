@@ -9,7 +9,7 @@ Page::Page(string page_name, GumboOutput* Output, string Filename, string pageFo
 }
 
 Page::~Page(){
-   gumbo_destroy_output(&kGumboDefaultOptions, output);
+    gumbo_destroy_output(&kGumboDefaultOptions, output);
     for(size_t i = 0; i < pages.size(); i++){
         delete pages[i];
     }
@@ -56,11 +56,15 @@ bool Page::get_links_recursive(GumboNode *node){
 }
 
 Page* Page::get_sub_page(Link link){
-    string root_page = pages_folder + "/" + gen_uuid() + ".webpage";
+    uuid thisUUID;
+    string root_page = pages_folder + "/" + thisUUID.uuid_string() + ".webpage";
                                                         // wget prints a lot of garbage
     string command="wget -q -O " + root_page + " '" + link.get_href() + "' >/dev/null 2>&1";
-    system((const char*)command.c_str());
-    // const char* filename = argv[1];
+    int system_result = system((const char*)command.c_str());
+    
+    if(system_result != 0){
+        throw (string) "sigint detected";
+    }
 
     ifstream in(root_page.c_str(), ios::in | ios::binary);
     if (!in) {
