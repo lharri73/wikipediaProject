@@ -26,7 +26,7 @@ Page* Finder::get_next_file(){
 
     string root_page = pages_folder + "/" + thisUUID.uuid_string() + ".webpage";
                                                               // wget prints a lot of garbage
-    string command="wget -O " + root_page + " '" +random_url + "' >/dev/null 2>&1";
+    string command="wget -O " + root_page + "  \"" +random_url + "\" >/dev/null 2>&1";
     int system_result = system((const char*)command.c_str());
 
     if(system_result != 0){
@@ -113,21 +113,21 @@ void Finder::write_result(string* result){
 void Finder::begin(){
     string path[4];
     bool result;
-    Page *page;
     try{
-        page = get_next_file();
+        get_next_file();
     }catch(string s){
+        cerr << "detected sigint\n";
         return;
     }
-    result = find_hitler_recursive(0, page, path);
+    result = find_hitler_recursive(0, current_page, path);
 
     if(result){
-        printf("FOUND: ['%s', '%s', '%s', '%s']\n", page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
-        path[0] = page->name.c_str();
+        printf("FOUND: ['%s', '%s', '%s', '%s']\n", current_page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
+        path[0] = current_page->name.c_str();
         write_result(path);
     }else{
         path[0] = "NOT POSSIBLE";
-        path[1] = page->name;
+        path[1] = current_page->name;
         if(!sigInt)
             write_result(path);
     }

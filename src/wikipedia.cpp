@@ -11,6 +11,7 @@ void signal_handler(int signal){
 
 int main(int argc, char** argv){
     signal(SIGINT, signal_handler);
+    signal(SIGSEGV, handler);
     if(argc == 2 && string(argv[1])=="clean"){
         cleanup();
         exit(0);
@@ -77,4 +78,17 @@ const string find_title(const GumboNode* root) {
         }
     }
     return "<no title found>";
+}
+
+void handler(int sig){
+    void *array[10];
+    size_t size;
+
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 10);
+
+    // print out all the frames to stderr
+    fprintf(stderr, "Error: signal %d:\n", sig);
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    exit(1);
 }

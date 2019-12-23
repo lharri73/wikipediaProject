@@ -1,4 +1,4 @@
-CFLAGS ?= -std=c++11 -g -Wall -Wextra -Iinclude
+CFLAGS ?= -std=c++11 -g -rdynamic -Wall -Wextra -Iinclude
 LFLAGS := $(shell pkg-config --libs gumbo) -LLIBDIR
 
 # ------------------------

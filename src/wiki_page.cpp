@@ -42,12 +42,14 @@ bool Page::get_links_recursive(GumboNode *node){
                result.find("File:") == string::npos && \
                result.find("/wiki/") == 0){
                 GumboAttribute* title = gumbo_get_attribute(&node->v.element.attributes, "title");
-                links.push_back(Link(href->value, title->value));
+                if(title){
+                    links.push_back(Link(href->value, title->value));
+                }
             }
     }
 
     GumboVector* children = &node->v.element.children;
-    for (unsigned int i = 0; i < children->length; ++i) {
+    for (unsigned int i = 0; i < children->length; i++) {
         if(!get_links_recursive(static_cast<GumboNode*>(children->data[i]))){
             return false;
         }
@@ -59,7 +61,7 @@ Page* Page::get_sub_page(Link link){
     uuid thisUUID;
     string root_page = pages_folder + "/" + thisUUID.uuid_string() + ".webpage";
                                                         // wget prints a lot of garbage
-    string command="wget -q -O " + root_page + " '" + link.get_href() + "' >/dev/null 2>&1";
+    string command="wget -q -O " + root_page + " \"" + link.get_href() + "\" >/dev/null 2>&1";
     int system_result = system((const char*)command.c_str());
     
     if(system_result != 0){
