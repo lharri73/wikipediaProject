@@ -15,6 +15,11 @@ Finder::Finder(string search_for, int max_n, string resultsFile){
 
     sigInt = false;
 }
+
+Finder::Finder(){
+    sigInt = false;
+}
+
 Finder::~Finder(){
     delete current_page;
 }
