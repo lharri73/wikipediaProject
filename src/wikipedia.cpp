@@ -2,10 +2,11 @@
 using namespace std;
 
 void cleanup();
-void sigint_cleanup(int signal);
-
+void multithread_start(string goa_page, int max_depth);
+void sigint(int s){
+    cout << "here\n";
+}
 int main(int argc, char** argv){
-    signal(SIGINT, sigint_cleanup);
     if(argc == 2 && string(argv[1])=="clean"){
         cleanup();
         exit(0);
@@ -14,10 +15,25 @@ int main(int argc, char** argv){
         exit(1);
     }
 
-    Finder finder = Finder(string(argv[1]), atoi(argv[2]), "results/results.csv");
-    finder.begin();
+    vector<thread> threads;
+    unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
+
+    if(concurentThreadsSupported == 0) concurentThreadsSupported = 1; // will return 0 if unable to detect
+
+    for(size_t i =0; i < concurentThreadsSupported; i++){
+        threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
+    }
+    threads[concurentThreadsSupported-1].join();
+    exit(10);
 
     return 0;
+}
+
+void multithread_start(string goal_page, int max_depth){
+    bool running = true;
+    signal(SIGTERM, [](int signum) { running=false });
+    Finder finder = Finder(goal_page, max_depth, "results/results.csv");
+    finder.begin();
 }
 
 void cleanup(){
@@ -82,8 +98,3 @@ const string find_title(const GumboNode* root) {
     return "<no title found>";
 }
 
-void sigint_cleanup(int signal){
-    (void) signal;
-    cleanup();
-    exit(1);
-}

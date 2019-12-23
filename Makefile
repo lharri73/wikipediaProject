@@ -1,4 +1,4 @@
-CFLAGS ?= -std=c++98 -g -Wall -Wextra -Iinclude
+CFLAGS ?= -std=c++11 -g -Wall -Wextra -Iinclude
 LFLAGS := $(shell pkg-config --libs gumbo) -LLIBDIR
 
 # ------------------------
@@ -29,4 +29,4 @@ obj/finder.o: src/finder.cpp include/wikipedia.hpp
 # Executables
 
 bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o
-	g++ $(CFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o -luuid -lgumbo
+	g++ $(CFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o -luuid -lgumbo -pthread

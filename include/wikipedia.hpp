@@ -15,6 +15,8 @@
 
 #include <vector>
 
+#include <thread>
+
 class Link{
     public:
         Link(std::string Href, std::string Title);
@@ -57,6 +59,7 @@ class Finder{
 
         std::string file_name;
     protected:
+        void sigint(int signal);
         bool hasRun;
         int MAX;
         std::string goal_page;

@@ -2,6 +2,7 @@
 using namespace std;
 
 Finder::Finder(string search_for, int max_n, string resultsFile){
+    
     MAX = max_n-1;
     goal_page = search_for;
     pages_folder = "pages";
@@ -103,20 +104,21 @@ void Finder::write_result(string* result){
 }
 
 void Finder::begin(){
-    while(true){
-        string path[4];
-        bool result;
-        Page *page = get_next_file();
-        result = find_hitler_recursive(0, page, path);
-        if(result){
-            printf("FOUND: ['%s', '%s', '%s', '%s']\n", page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
-            path[0] = page->name.c_str();
-            write_result(path);
-        }else{
-            path[0] = "NOT POSSIBLE";
-            path[1] = page->name;
-            write_result(path);
-        }
-    }
+    string path[4];
+    bool result;
+    Page *page = get_next_file();
+    result = find_hitler_recursive(0, page, path);
 
+    if(result){
+        printf("FOUND: ['%s', '%s', '%s', '%s']\n", page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
+        path[0] = page->name.c_str();
+        write_result(path);
+    }else{
+        path[0] = "NOT POSSIBLE";
+        path[1] = page->name;
+        write_result(path);
+    }
+}
+void Finder::sigint(int signal){
+    cout << "caught signal " << signal << '\n';
 }
