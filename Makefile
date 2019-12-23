@@ -1,5 +1,5 @@
 CFLAGS ?= -std=c++11 -g -rdynamic -Wall -Wextra -Iinclude
-LFLAGS := $(shell pkg-config --libs gumbo) -LLIBDIR
+LFLAGS := $(shell pkg-config --libs gumbo) -LLIBDIR -Wl,-rpath -Wl,LIBDIR
 
 # ------------------------
 # "make binaries" generates all required binaries
@@ -32,4 +32,4 @@ obj/uuid.o: src/uuid.cpp include/wikipedia.hpp
 # Executables
 
 bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o
-	g++ $(CFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o -luuid -lgumbo -pthread
+	g++ $(CFLAGS) $(LFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o -luuid -lgumbo -pthread
