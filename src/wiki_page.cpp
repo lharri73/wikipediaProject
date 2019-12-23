@@ -9,7 +9,7 @@ Page::Page(string page_name, GumboOutput* Output, string Filename, string pageFo
 }
 
 Page::~Page(){
-//    gumbo_destroy_output(&kGumboDefaultOptions, output);
+   gumbo_destroy_output(&kGumboDefaultOptions, output);
     for(size_t i = 0; i < pages.size(); i++){
         delete pages[i];
     }
