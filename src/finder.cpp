@@ -58,7 +58,7 @@ Page* Finder::get_next_file(){
     current_page = cur_page;
     return cur_page;
 }
-bool Finder::find_hitler_recursive(int n, Page *page, string *path){
+bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
     if(sigInt) return false;
     if(n > MAX) return false;
 
@@ -117,7 +117,7 @@ void Finder::write_result(string* result){
 }
 
 void Finder::begin(){
-    string* path = (string*) calloc(4, sizeof(string));
+    string path[4] = {"","","",""};
     bool result;
     try{
         get_next_file();
@@ -137,7 +137,6 @@ void Finder::begin(){
         if(!sigInt)
             write_result(path);
     }
-    free(path);
 }
 void Finder::sigint(int signal){
     cout << "caught signal " << signal << '\n';

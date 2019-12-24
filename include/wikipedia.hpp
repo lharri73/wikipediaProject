@@ -56,7 +56,7 @@ class Finder{
         Finder(std::string search_for, int max_n, std::string resultsFile);
         ~Finder();
         Page *get_next_file();
-        bool find_hitler_recursive(int n, Page* page, std::string *path);
+        bool find_hitler_recursive(int n, Page* page, std::string path[]);
         void write_result(std::string* result);
 
         void begin();
