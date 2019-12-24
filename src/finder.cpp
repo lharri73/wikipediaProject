@@ -31,7 +31,7 @@ Page* Finder::get_next_file(){
 
     string root_page = "pages/" + thisUUID.uuid_string() + ".webpage";
                                                               // wget prints a lot of garbage
-    string command="wget -O " + root_page + "  \"" +random_url + "\" >/dev/null 2>&1";
+    string command="curl -L -o " + root_page + "  \"" +random_url + "\" >/dev/null 2>&1";
     int system_result = system((const char*)command.c_str());
 
     if(system_result != 0){
