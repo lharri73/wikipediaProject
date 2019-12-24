@@ -38,10 +38,15 @@ int main(int argc, char** argv){
 }
 
 void multithread_start(string goal_page, int max_depth){
+    Finder *finder;
     while(gSignalStatus != 2){
-        Finder finder(goal_page, max_depth, "results/results.csv");
-        finder.begin();
-        if(finder.sigInt) break;
+        finder = new Finder(goal_page, max_depth, "results/results.csv");
+        finder->begin();
+        if(finder->sigInt){
+            delete finder;
+            break;
+        }
+        delete finder;
     }
 }
 
