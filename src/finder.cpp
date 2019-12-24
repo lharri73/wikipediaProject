@@ -29,7 +29,7 @@ Page* Finder::get_next_file(){
 
     uuid thisUUID;
 
-    string root_page = pages_folder + "/" + thisUUID.uuid_string() + ".webpage";
+    string root_page = "pages/" + thisUUID.uuid_string() + ".webpage";
                                                               // wget prints a lot of garbage
     string command="wget -O " + root_page + "  \"" +random_url + "\" >/dev/null 2>&1";
     int system_result = system((const char*)command.c_str());
@@ -53,7 +53,7 @@ Page* Finder::get_next_file(){
     GumboOutput* output = gumbo_parse(contents.c_str());
 
     const string title = find_title(output->root);
-    Page *cur_page = new Page(title, output, root_page, pages_folder);
+    Page *cur_page = new Page(title, output, root_page);
     printf("Root: %s...\n",cur_page->name.c_str());
     current_page = cur_page;
     return cur_page;

@@ -33,7 +33,7 @@ class Link{
 
 class Page{
     public:
-        Page(std::string page_name, GumboOutput *output, std::string filename, std::string pages_folder);
+        Page(std::string page_name, GumboOutput *output, std::string filename);
         ~Page();
 
         Page* get_sub_page(Link &link);
@@ -45,7 +45,6 @@ class Page{
         GumboOutput *output;
         std::string fileName;
 
-        std::string pages_folder;
         std::vector <Page*> pages;
     private:
         bool get_links_recursive(GumboNode *node);

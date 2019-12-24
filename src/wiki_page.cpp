@@ -1,10 +1,9 @@
 #include "wikipedia.hpp"
 using namespace std;
-Page::Page(string page_name, GumboOutput* Output, string Filename, string pageFolder){
+Page::Page(string page_name, GumboOutput* Output, string Filename){
     name = page_name;
     output = Output;
     fileName = Filename;
-    pages_folder = pageFolder;
     get_links();
 }
 
@@ -59,7 +58,7 @@ bool Page::get_links_recursive(GumboNode *node){
 
 Page* Page::get_sub_page(Link &link){
     uuid thisUUID;
-    string root_page = pages_folder + "/" + thisUUID.uuid_string() + ".webpage";
+    string root_page = "pages/" + thisUUID.uuid_string() + ".webpage";
                                                         // wget prints a lot of garbage
     string command="wget -q -O " + root_page + " \"" + link.get_href() + "\" >/dev/null 2>&1";
     int system_result = system((const char*)command.c_str());
@@ -83,7 +82,7 @@ Page* Page::get_sub_page(Link &link){
     GumboOutput* output = gumbo_parse(contents.c_str());
 
     const string title = find_title(output->root);
-    Page *cur_page = new Page(title, output, root_page, pages_folder);
+    Page *cur_page = new Page(title, output, root_page);
     pages.push_back(cur_page);
     return cur_page;
 }
