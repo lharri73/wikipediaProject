@@ -36,7 +36,7 @@ class Page{
         Page(std::string page_name, GumboOutput *output, std::string filename, std::string pages_folder);
         ~Page();
 
-        Page* get_sub_page(Link link);
+        Page* get_sub_page(Link &link);
 
         std::string name;
         std::vector <Link> links;

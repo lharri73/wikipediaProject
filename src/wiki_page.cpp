@@ -57,7 +57,7 @@ bool Page::get_links_recursive(GumboNode *node){
     return true;
 }
 
-Page* Page::get_sub_page(Link link){
+Page* Page::get_sub_page(Link &link){
     uuid thisUUID;
     string root_page = pages_folder + "/" + thisUUID.uuid_string() + ".webpage";
                                                         // wget prints a lot of garbage

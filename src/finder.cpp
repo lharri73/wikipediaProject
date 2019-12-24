@@ -113,10 +113,11 @@ void Finder::write_result(string* result){
             fout << ',';
         }
     }
+    fout.close();
 }
 
 void Finder::begin(){
-    string path[4];
+    string* path = (string*) calloc(4, sizeof(string));
     bool result;
     try{
         get_next_file();
@@ -136,6 +137,7 @@ void Finder::begin(){
         if(!sigInt)
             write_result(path);
     }
+    free(path);
 }
 void Finder::sigint(int signal){
     cout << "caught signal " << signal << '\n';
