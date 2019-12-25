@@ -55,6 +55,8 @@ void multithread_start(string goal_page, int max_depth){
             }
         }catch(length_error){
             cerr << "caught length_error\n";
+	    delete finder;
+	    return;
         }
 	delete finder;
     }

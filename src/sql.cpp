@@ -39,11 +39,14 @@ void SQLConnector::write(string *result){
 }
 
 void SQLConnector::write_negative(string &name){
+    lock_guard<mutex> guard(get_driver_mutex);
     escape_special(name);
     stmt->execute("INSERT INTO negative(name) VALUES ('" + name + "')");
 }
 
 void SQLConnector::write_positive(string &first, string &second, string &third, string &fourth){
+	
+    lock_guard<mutex> guard(get_driver_mutex);
     escape_special(first);
     escape_special(second);
     escape_special(third);
