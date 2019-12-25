@@ -4,7 +4,10 @@ using namespace std;
 
 void escape_special(string &s);
 
+mutex get_driver_mutex;
+
 SQLConnector::SQLConnector(){
+    lock_guard<mutex> guard(get_driver_mutex);
     driver =  get_driver_instance();
     con = driver->connect("tcp://34.68.183.57:3306", "root", "exwmaCrxx8zvPCCl");
     stmt = con->createStatement();
