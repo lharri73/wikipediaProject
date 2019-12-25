@@ -19,20 +19,25 @@ int main(int argc, char** argv){
         printf("usage: %s 'goal_page_name' max_depth\n", argv[0]);
         exit(1);
     }
+    if(argc >=4 && string(argv[3]) == "single"){
+        multithread_start(string(argv[1]), atoi(argv[2]));
+    }else{
+        vector<thread> threads;
+        unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
 
-    vector<thread> threads;
-    unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
+        size_t numThreads = concurentThreadsSupported == 0 ? 1 : concurentThreadsSupported/2; // will return 0 if unable to detect
+        for(size_t i =0; i < numThreads; i++){
+            threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
+        }
 
-    if(concurentThreadsSupported == 0) concurentThreadsSupported = 1; // will return 0 if unable to detect
+        while(gSignalStatus != 2){
+            sleep(1);
+        }
 
-    for(size_t i =0; i < concurentThreadsSupported; i++){
-        threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
+        for(size_t i = 0; i < threads.size(); i++){
+            threads[i].join();
+        }
     }
-    for(size_t i = 0; i < threads.size(); i++){
-        threads[i].join();
-    }
-
-    // multithread_start(string(argv[1]), atoi(argv[2]));
 
     return 0;
 }
@@ -40,13 +45,17 @@ int main(int argc, char** argv){
 void multithread_start(string goal_page, int max_depth){
     Finder *finder;
     while(gSignalStatus != 2){
-        finder = new Finder(goal_page, max_depth, "results/results.csv");
-        finder->begin();
-        if(finder->sigInt){
+        try{
+            finder = new Finder(goal_page, max_depth, "results/results.csv");
+            finder->begin();
+            if(finder->sigInt){
+                delete finder;
+                break;
+            }
             delete finder;
-            break;
+        }catch(length_error){
+            cerr << "caught length_error\n";
         }
-        delete finder;
     }
 }
 

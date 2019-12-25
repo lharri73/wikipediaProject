@@ -2,7 +2,7 @@
 using namespace std;
 mutex g_pages_mutex;
 Finder::Finder(string search_for, int max_n, string resultsFile){
-    
+    sql_connection = new SQLConnector();
     MAX = max_n-1;
     goal_page = search_for;
     pages_folder = "pages";
@@ -21,6 +21,7 @@ Finder::Finder(){
 }
 
 Finder::~Finder(){
+    delete sql_connection;
     delete current_page;
 }
 Page* Finder::get_next_file(){
@@ -64,17 +65,13 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
 
     // base case
     if(page->name == goal_page){
-        cerr << "\treturning base case\n";
         path[n+1] = goal_page;
-        cerr << "...done\n";
         return true;
     }
 
     for(size_t i = 0; i < page->links.size(); i++){
         if(page->links[i].get_title() == goal_page){
-            cerr << "\treturning for root links\n";
             path[n+1] = page->links[i].get_title();
-            cerr << "...done\n";
             return true;
         }
     }
@@ -90,10 +87,9 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
             }
 
             if(nextPage->name == "") continue;
+            
             if(find_hitler_recursive(n+1, nextPage, path)){
-                cerr << "\treturning for recursive find hitler\n";
                 path[n+1] = page->links[i].get_title();
-                cerr << "...done\n";
                 return true;
            }
        }
@@ -131,27 +127,18 @@ void Finder::begin(){
         cerr << "detected sigint\n";
         return;
     }
-    cerr << "starting first find_hitler\n";
     result = find_hitler_recursive(0, current_page, path);
 
     if(result){
-        cerr << "printing result\n";
         printf("FOUND: ['%s', '%s', '%s', '%s']\n", current_page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
-        cerr << "...done\n";
         path[0] = current_page->name.c_str();
-        cerr << "setting true path[0]\n";
-        cerr << "...done\nwriting\n";
         write_result(path);
-        cerr << "...done\n";
     }else{
-        cerr << "setting false path\n";
         path[0] = "NOT POSSIBLE";
         path[1] = current_page->name;
-        cerr << "...done\n";
-        if(!sigInt)
-            cerr << "writing\n";
+        if(!sigInt){
             write_result(path);
-            cerr << "...done\n";
+	}
     }
 }
 void Finder::sigint(int signal){

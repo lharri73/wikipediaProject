@@ -1,1 +1,1 @@
-sudo apt install uuid-dev libtool automake
+sudo apt install uuid-dev libtool automake libmysqlcppconn-dev

@@ -21,6 +21,13 @@
 
 #include <execinfo.h>
 
+#include "mysql_connection.h"
+
+#include <cppconn/driver.h>
+#include <cppconn/exception.h>
+#include <cppconn/resultset.h>
+#include <cppconn/statement.h>
+
 class Link{
     public:
         Link(std::string Href, std::string Title);
@@ -50,6 +57,21 @@ class Page{
         bool get_links_recursive(GumboNode *node);
 };
 
+class SQLConnector{
+    public:
+        // sql::ResultSet *res;
+        SQLConnector();
+        ~SQLConnector();
+        void write(string *result);
+    protected:
+        sql::Driver *driver;
+        sql::Connection *con;
+        sql::Statement *stmt;
+
+        void write_negative(string &name);
+        void write_positive(string &first, string &second, string &third, string &fourth);
+};
+
 class Finder{
     public:
         Finder();
@@ -63,6 +85,7 @@ class Finder{
 
         std::string file_name;
         bool sigInt;
+        SQLConnector *sql_connection;
     protected:
         void sigint(int signal);
         bool hasRun;

@@ -49,7 +49,7 @@ bool Page::get_links_recursive(GumboNode *node){
 
     GumboVector* children = &node->v.element.children;
     for (unsigned int i = 0; i < children->length; i++) {
-        if(!get_links_recursive(static_cast<GumboNode*>(children->data[i]))){
+        if(!get_links_recursive(/*static_cast<GumboNode*>(*/(GumboNode*)children->data[i])){
             return false;
         }
     }
@@ -59,7 +59,7 @@ bool Page::get_links_recursive(GumboNode *node){
 Page* Page::get_sub_page(Link &link){
     uuid thisUUID;
     string root_page = "pages/" + thisUUID.uuid_string() + ".webpage";
-                                                        // wget prints a lot of garbage
+                                                        // wget/curl prints a lot of garbage
     string command="curl -L -o " + root_page + " \"" + link.get_href() + "\" >/dev/null 2>&1";
     int system_result = system((const char*)command.c_str());
     

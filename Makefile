@@ -1,4 +1,4 @@
-CFLAGS ?= -std=c++11 -g -rdynamic -Wall -Wextra -Iinclude
+CFLAGS ?= -std=c++11 -g -rdynamic -Wall -Wextra -Wpedantic -Iinclude
 LFLAGS := $(shell pkg-config --libs gumbo) -LLIBDIR -Wl,-rpath -Wl,LIBDIR
 
 # ------------------------
@@ -28,8 +28,11 @@ obj/finder.o: src/finder.cpp include/wikipedia.hpp
 
 obj/uuid.o: src/uuid.cpp include/wikipedia.hpp
 	g++ $(CFLAGS) -c -o obj/uuid.o src/uuid.cpp
+
+obj/sql.o: src/sql.cpp include/wikipedia.hpp
+	g++ $(CFLAGS) -c -o obj/sql.o src/sql.cpp
 # -------------------------
 # Executables
 
-bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o
-	g++ $(CFLAGS) $(LFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o -luuid -lgumbo -pthread
+bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o
+	g++ $(CFLAGS) $(LFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o -luuid -lgumbo -lmysqlcppconn -pthread
