@@ -97,25 +97,26 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
     return false;
 }
 void Finder::write_result(string* result){
-    ofstream fout;
-    fout.open(results_file.c_str(), ios_base::app);
+    sql_connection->write(result);
+    // ofstream fout;
+    // fout.open(results_file.c_str(), ios_base::app);
 
-    lock_guard<mutex> guard(g_pages_mutex);
+    // lock_guard<mutex> guard(g_pages_mutex);
 
-    if(!fout){
-        cerr << "BAD RESULTS FILE\n " << results_file;
-        exit(2);
-    }
+    // if(!fout){
+    //     cerr << "BAD RESULTS FILE\n " << results_file;
+    //     exit(2);
+    // }
 
-    for(int i = 0; i < 4; i++){
-        fout << '"' << result[i] << '"';
-        if(i == 3){
-            fout << '\n';
-        }else{
-            fout << ',';
-        }
-    }
-    fout.close();
+    // for(int i = 0; i < 4; i++){
+    //     fout << '"' << result[i] << '"';
+    //     if(i == 3){
+    //         fout << '\n';
+    //     }else{
+    //         fout << ',';
+    //     }
+    // }
+    // fout.close();
 }
 
 void Finder::begin(){

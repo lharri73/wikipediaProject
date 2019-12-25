@@ -2,6 +2,8 @@
 
 using namespace std;
 
+void escape_special(string &s);
+
 SQLConnector::SQLConnector(){
     driver =  get_driver_instance();
     con = driver->connect("tcp://34.68.183.57:3306", "root", "exwmaCrxx8zvPCCl");
@@ -34,6 +36,26 @@ void SQLConnector::write(string *result){
 }
 
 void SQLConnector::write_negative(string &name){
+    escape_special(name);
     stmt->execute("INSERT INTO negative(name) VALUES ('" + name + "')");
+}
 
+void SQLConnector::write_positive(string &first, string &second, string &third, string &fourth){
+    escape_special(first);
+    escape_special(second);
+    escape_special(third);
+    escape_special(fourth);
+    char command[255*4+30];
+    sprintf(command, "INSERT INTO positive(first, second, third, fourth) VALUES ('%s', '%s', '%s', '%s')", first.c_str(), second.c_str(), third.c_str(), fourth.c_str());
+    cout << command << '\n';
+    stmt->execute(string(command));
+}
+
+void escape_special(string &s){
+    for(size_t i = 0; i < s.size(); i++){
+        if(s[i] == '\'' || s[i] == '\"' || s[i] == '\?' || s[i] == '\\'){
+            s.insert(i, "\\");
+            i++;
+        }
+    }
 }

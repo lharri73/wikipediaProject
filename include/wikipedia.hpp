@@ -62,14 +62,14 @@ class SQLConnector{
         // sql::ResultSet *res;
         SQLConnector();
         ~SQLConnector();
-        void write(string *result);
+        void write(std::string *result);
     protected:
         sql::Driver *driver;
         sql::Connection *con;
         sql::Statement *stmt;
 
-        void write_negative(string &name);
-        void write_positive(string &first, string &second, string &third, string &fourth);
+        void write_negative(std::string &name);
+        void write_positive(std::string &first, std::string &second, std::string &third, std::string &fourth);
 };
 
 class Finder{
