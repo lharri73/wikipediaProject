@@ -10,6 +10,7 @@ void signal_handler(int signal){
 }
 
 int main(int argc, char** argv){
+    cleanup();
     signal(SIGINT, signal_handler);
     signal(SIGSEGV, handler);
     if(argc == 2 && string(argv[1])=="clean"){
@@ -31,13 +32,18 @@ int main(int argc, char** argv){
             threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
         }
 
-        while(gSignalStatus != 2){
-            sleep(1);
-        }
 
-        for(size_t i = 0; i < threads.size(); i++){
-            threads[i].join();
+        // for(size_t i = 0; i < threads.size(); i++){
+        //     threads[i].detach();
+        // }
+        while(gSignalStatus != 2){
+            for(size_t i = 0; i < threads.size(); i++){
+                if(!threads[i].joinable()){
+                    cout << "\t" << i << " is NOT joinable\n";
+                }
+            }
         }
+        cout <<"\n----------------------------\n\tdetected sigint\n----------------------------\n";
     }
 
     return 0;

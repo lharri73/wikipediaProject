@@ -53,7 +53,6 @@ void SQLConnector::write_positive(string &first, string &second, string &third, 
     escape_special(fourth);
     char command[255*4+30];
     sprintf(command, "INSERT INTO positive(first, second, third, fourth) VALUES ('%s', '%s', '%s', '%s')", first.c_str(), second.c_str(), third.c_str(), fourth.c_str());
-    cout << command << '\n';
     stmt->execute(string(command));
 }
 
