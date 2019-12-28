@@ -4,7 +4,8 @@
 #include <filesystem>
 #include <glob.h>
 
-#include <uuid/uuid.h>
+#include <sstream>
+#include <random>
 #include <cstdio>
 #include <stdlib.h> 
 #include <cstdlib>
@@ -101,10 +102,11 @@ class Finder{
 class uuid{
     public:
         uuid();
-        ~uuid();
-        const std::string uuid_string() const;
+        std::string uuid_string() const;
     private:
-        char* generated_uuid;
+        std::string uuidStr;
+        unsigned int random_char();
+        std::string generate_hex(const unsigned int len);
 };
 
 const std::string find_title(const GumboNode* root);

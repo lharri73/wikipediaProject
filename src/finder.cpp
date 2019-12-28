@@ -54,8 +54,11 @@ Page* Finder::get_next_file(){
     GumboOutput* output = gumbo_parse(contents.c_str());
 
     const string title = find_title(output->root);
+    if(title == "BAD TITLE BECAUSE NPOS"){
+        return get_next_file();
+    }
     Page *cur_page = new Page(title, output, root_page);
-    printf("Root: %s...\n",cur_page->name.c_str());
+    printf("Root : %s...\n",cur_page->name.c_str());
     current_page = cur_page;
     return cur_page;
 }
@@ -97,30 +100,13 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
     return false;
 }
 void Finder::write_result(string* result){
+    cerr << "Don't use this function\n";
     sql_connection->write(result);
-    // ofstream fout;
-    // fout.open(results_file.c_str(), ios_base::app);
-
-    // lock_guard<mutex> guard(g_pages_mutex);
-
-    // if(!fout){
-    //     cerr << "BAD RESULTS FILE\n " << results_file;
-    //     exit(2);
-    // }
-
-    // for(int i = 0; i < 4; i++){
-    //     fout << '"' << result[i] << '"';
-    //     if(i == 3){
-    //         fout << '\n';
-    //     }else{
-    //         fout << ',';
-    //     }
-    // }
-    // fout.close();
 }
 
 void Finder::begin(){
-    string path[4] = {"","","",""};
+    string * path = new string[4];
+    for(size_t i = 0; i < 3; i++) path[i]="";
     bool result;
     try{
         get_next_file();
@@ -133,14 +119,15 @@ void Finder::begin(){
     if(result){
         printf("FOUND: ['%s', '%s', '%s', '%s']\n", current_page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
         path[0] = current_page->name.c_str();
-        write_result(path);
+        sql_connection->write(path);
     }else{
         path[0] = "NOT POSSIBLE";
         path[1] = current_page->name;
         if(!sigInt){
-            write_result(path);
+            sql_connection->write(path);
 	}
     }
+    delete [] path;
 }
 void Finder::sigint(int signal){
     cout << "caught signal " << signal << '\n';

@@ -59,7 +59,9 @@ void SQLConnector::write_positive(string &first, string &second, string &third, 
 void escape_special(string &s){
     for(size_t i = 0; i < s.size(); i++){
         if(s[i] == '\'' || s[i] == '\"' || s[i] == '\?' || s[i] == '\\'){
+            cerr << "\tinserting\n";
             s.insert(i, "\\");
+            cerr << "inserting done\n";
             i++;
         }
     }

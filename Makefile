@@ -35,4 +35,4 @@ obj/sql.o: src/sql.cpp include/wikipedia.hpp
 # Executables
 
 bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o
-	g++ $(CFLAGS) $(LFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o -luuid -lgumbo -lmysqlcppconn -pthread
+	g++ $(CFLAGS) $(LFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o -lgumbo -lmysqlcppconn -pthread

@@ -10,7 +10,6 @@ void signal_handler(int signal){
 }
 
 int main(int argc, char** argv){
-    cleanup();
     signal(SIGINT, signal_handler);
     signal(SIGSEGV, handler);
     if(argc == 2 && string(argv[1])=="clean"){
@@ -23,6 +22,7 @@ int main(int argc, char** argv){
     if(argc >=4 && string(argv[3]) == "single"){
         multithread_start(string(argv[1]), atoi(argv[2]));
     }else{
+        cleanup();
         vector<thread> threads;
         unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
 
@@ -50,22 +50,14 @@ int main(int argc, char** argv){
 }
 
 void multithread_start(string goal_page, int max_depth){
-    Finder *finder;
+    Finder *finder = new Finder(goal_page, max_depth, "results/results.csv");
     while(gSignalStatus != 2){
-        try{
-    	    finder = new Finder(goal_page, max_depth, "results/results.csv");
-            finder->begin();
-            if(finder->sigInt){
-		delete finder;
-                break;
-            }
-        }catch(length_error){
-            cerr << "caught length_error\n";
-	    delete finder;
-	    return;
+        finder->begin();
+        if(finder->sigInt){
+            break;
         }
-	delete finder;
     }
+    delete finder;
 }
 
 void cleanup(){
@@ -98,6 +90,11 @@ const string find_title(const GumboNode* root) {
             GumboNode* title_text = (GumboNode*) child->v.element.children.data[0];
             string result = title_text->v.text.text;
             size_t trailed_pos = result.find(" - Wikipedia");
+            cerr << "\t\t" << result << " : " << trailed_pos << '\n';
+            if(trailed_pos == string::npos){
+                // this happens when we receive "400 bad request" or simply find a link to a non-wikipedia page somehow
+                return "BAD TITLE BECAUSE NPOS";
+            }
             result.resize(trailed_pos);
             return result;
         }
