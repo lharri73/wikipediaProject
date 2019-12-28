@@ -55,6 +55,7 @@ Page* Finder::get_next_file(){
 
     const string title = find_title(output->root);
     if(title == "BAD TITLE BECAUSE NPOS"){
+        hasRun = false;
         return get_next_file();
     }
     Page *cur_page = new Page(title, output, root_page);
