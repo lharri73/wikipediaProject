@@ -90,7 +90,6 @@ const string find_title(const GumboNode* root) {
             GumboNode* title_text = (GumboNode*) child->v.element.children.data[0];
             string result = title_text->v.text.text;
             size_t trailed_pos = result.find(" - Wikipedia");
-            cerr << "\t\t" << result << " : " << trailed_pos << '\n';
             if(trailed_pos == string::npos){
                 // this happens when we receive "400 bad request" or simply find a link to a non-wikipedia page somehow
                 return "BAD TITLE BECAUSE NPOS";
