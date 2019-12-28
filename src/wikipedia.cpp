@@ -1,4 +1,6 @@
 #include "wikipedia.hpp"
+#include "thread_pool.h"
+
 using namespace std;
 
 void cleanup();
@@ -23,19 +25,25 @@ int main(int argc, char** argv){
         multithread_start(string(argv[1]), atoi(argv[2]));
     }else{
         cleanup();
-        vector<thread> threads;
         unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
 
         size_t numThreads = concurentThreadsSupported == 0 ? 1 : concurentThreadsSupported; // will return 0 if unable to detect
-        cout << numThreads << '\n';
-        for(size_t i =0; i < numThreads; i++){
-            threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
+        ThreadPool pool(numThreads);
+        
+        cout << "Working with " << numThreads << " threads\n";
+        double vm_usage, res_set;
+        vm_usage = 0.0;
+        while(true){
+            if(pool.tasks.size() < 1 && vm_usage < 32.0 * .5){
+                pool.enqueue(multithread_start, string(argv[1]), atoi(argv[2]));
+            }
+            mem_usage(vm_usage, res_set);
+            // cout << "--------------------------\n";
+            // cout << "     Memory Usage\n";
+            // cout << "VM: " << vm_usage << '\n';
+            // sleep(1);
         }
-
-
-        for(size_t i = 0; i < threads.size(); i++){
-            threads[i].join();
-        }
+        // threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
         cout <<"\n----------------------------\n\tdetected sigint\n----------------------------\n";
     }
 
@@ -44,13 +52,12 @@ int main(int argc, char** argv){
 
 void multithread_start(string goal_page, int max_depth){
     Finder *finder = new Finder(goal_page, max_depth, "results/results.csv");
-    while(gSignalStatus != 2){
         finder->begin();
-        if(finder->sigInt){
-            break;
-        }
-        cout << sizeof(finder);
-    }
+    // while(gSignalStatus != 2){
+    //     if(finder->sigInt){
+    //         break;
+    //     }
+    // }
     delete finder;
 }
 
@@ -106,4 +113,25 @@ void handler(int sig){
     fprintf(stderr, "Error: signal %d:\n", sig);
     backtrace_symbols_fd(array, size, STDERR_FILENO);
     exit(1);
+}
+
+void mem_usage(double& vm_usage, double& resident_set) {
+   vm_usage = 0.0;
+   resident_set = 0.0;
+   ifstream stat_stream("/proc/self/stat",ios_base::in); //get info from procdirectory
+   //create some variables to get info
+   string pid, comm, state, ppid, pgrp, session, tty_nr;
+   string tpgid, flags, minflt, cminflt, majflt, cmajflt;
+   string utime, stime, cutime, cstime, priority, nice;
+   string O, itrealvalue, starttime;
+   unsigned long vsize;
+   long rss;
+   stat_stream >> pid >> comm >> state >> ppid >> pgrp >> session >> tty_nr
+   >> tpgid >> flags >> minflt >> cminflt >> majflt >> cmajflt
+   >> utime >> stime >> cutime >> cstime >> priority >> nice
+   >> O >> itrealvalue >> starttime >> vsize >> rss; // don't care about the rest
+   stat_stream.close();
+   long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // for x86-64 is configured to use 2MB pages
+   vm_usage = vsize /1073741824.0;
+   resident_set = rss * page_size_kb;
 }

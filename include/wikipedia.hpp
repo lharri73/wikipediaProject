@@ -110,3 +110,5 @@ class uuid{
 
 const std::string find_title(const GumboNode* root);
 void handler(int sig);
+
+void mem_usage(double &vm_usage, double& resident_set);
