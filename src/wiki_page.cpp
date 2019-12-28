@@ -61,7 +61,7 @@ Page* Page::get_sub_page(Link &link){
     string root_page = "pages/" + thisUUID.uuid_string() + ".webpage";
                                                         // wget/curl prints a lot of garbage
     string command="curl -L -o " + root_page + " \"" + link.get_href() + "\" >/dev/null 2>&1";
-    int system_result = system((const char*)command.c_str());
+    int system_result = system(command.c_str());
     
     if(system_result != 0){
         throw (string) "sigint detected";
@@ -70,7 +70,7 @@ Page* Page::get_sub_page(Link &link){
     ifstream in(root_page.c_str(), ios::in | ios::binary);
     if (!in) {
         std::cerr << "get_sub_page: File " << root_page << " not found!\n";
-        exit(EXIT_FAILURE);
+        exit(-1);
     }
 
     string contents;

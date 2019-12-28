@@ -75,7 +75,6 @@ class SQLConnector{
 
 class Finder{
     public:
-        Finder();
         Finder(std::string search_for, int max_n, std::string resultsFile);
         ~Finder();
         Page *get_next_file();

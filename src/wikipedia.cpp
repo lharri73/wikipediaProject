@@ -27,21 +27,14 @@ int main(int argc, char** argv){
         unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
 
         size_t numThreads = concurentThreadsSupported == 0 ? 1 : concurentThreadsSupported; // will return 0 if unable to detect
-	cout << numThreads << '\n';
+        cout << numThreads << '\n';
         for(size_t i =0; i < numThreads; i++){
             threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
         }
 
 
-        // for(size_t i = 0; i < threads.size(); i++){
-        //     threads[i].detach();
-        // }
-        while(gSignalStatus != 2){
-            for(size_t i = 0; i < threads.size(); i++){
-                if(!threads[i].joinable()){
-                    cout << "\t" << i << " is NOT joinable\n";
-                }
-            }
+        for(size_t i = 0; i < threads.size(); i++){
+            threads[i].join();
         }
         cout <<"\n----------------------------\n\tdetected sigint\n----------------------------\n";
     }
@@ -56,6 +49,7 @@ void multithread_start(string goal_page, int max_depth){
         if(finder->sigInt){
             break;
         }
+        cout << sizeof(finder);
     }
     delete finder;
 }

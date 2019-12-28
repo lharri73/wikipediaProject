@@ -8,21 +8,19 @@ Finder::Finder(string search_for, int max_n, string resultsFile){
     pages_folder = "pages";
     results_file = resultsFile;
     random_url = "https://en.wikipedia.org/wiki/Special:Random";
+
+    // values used for testing
     // random_url = "https://en.wikipedia.org/wiki/United_States";
     // random_url = "https://en.wikipedia.org/wiki/World_war";
     
     hasRun = false;
-
-    sigInt = false;
-}
-
-Finder::Finder(){
     sigInt = false;
 }
 
 Finder::~Finder(){
     delete sql_connection;
-    delete current_page;
+    if(hasRun)
+        delete current_page;
 }
 Page* Finder::get_next_file(){
     if(hasRun && !sigInt)  delete current_page;
@@ -33,7 +31,7 @@ Page* Finder::get_next_file(){
     string root_page = "pages/" + thisUUID.uuid_string() + ".webpage";
                                                               // wget prints a lot of garbage
     string command="curl -L -o " + root_page + "  \"" +random_url + "\" >/dev/null 2>&1";
-    int system_result = system((const char*)command.c_str());
+    int system_result = system(command.c_str());
 
     if(system_result != 0){
         throw (string) "sigint detected";
@@ -51,6 +49,7 @@ Page* Finder::get_next_file(){
     in.seekg(0, ios::beg);
     in.read(&contents[0], contents.size());
     in.close();
+
     GumboOutput* output = gumbo_parse(contents.c_str());
 
     const string title = find_title(output->root);
@@ -130,6 +129,7 @@ void Finder::begin(){
     }
     delete [] path;
 }
+
 void Finder::sigint(int signal){
     cout << "caught signal " << signal << '\n';
 }
