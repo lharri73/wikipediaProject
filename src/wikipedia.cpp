@@ -13,15 +13,14 @@ void signal_handler(int signal){
 int main(int argc, char** argv){
     signal(SIGINT, signal_handler);
     signal(SIGSEGV, handler);
+
     if(argc == 2 && string(argv[1])=="clean"){
         cleanup();
         exit(0);
-    }else if(argc < 3){
-        printf("usage: %s 'goal_page_name' max_depth\n", argv[0]);
-        exit(1);
     }
-    if(argc >=4 && string(argv[3]) == "single"){
-        Finder *finder = new Finder(string(argv[1]), atoi(argv[2]));
+    args Args = parse_args(argc, argv);
+    if(Args.singleThread){
+        Finder *finder = new Finder(Args);
         finder->begin();
         delete finder;
     }else{
@@ -31,9 +30,8 @@ int main(int argc, char** argv){
         size_t numThreads = concurentThreadsSupported == 0 ? 1 : concurentThreadsSupported; // will return 0 if unable to detect
         cout << "Working with " << numThreads << " thread(s)\n";
 
-        ThreadPool(numThreads, string(argv[1]), atoi(argv[2]), gSignalStatus);
+        ThreadPool(numThreads, Args, gSignalStatus);
         
-        cout <<"\n----------------------------\n\tdetected sigint\n----------------------------\n";
     }
 
     return 0;
@@ -93,23 +91,87 @@ void handler(int sig){
     exit(1);
 }
 
-void mem_usage(double& vm_usage, double& resident_set) {
-   vm_usage = 0.0;
-   resident_set = 0.0;
-   ifstream stat_stream("/proc/self/stat",ios_base::in); //get info from procdirectory
-   //create some variables to get info
-   string pid, comm, state, ppid, pgrp, session, tty_nr;
-   string tpgid, flags, minflt, cminflt, majflt, cmajflt;
-   string utime, stime, cutime, cstime, priority, nice;
-   string O, itrealvalue, starttime;
-   unsigned long vsize;
-   long rss;
-   stat_stream >> pid >> comm >> state >> ppid >> pgrp >> session >> tty_nr
-   >> tpgid >> flags >> minflt >> cminflt >> majflt >> cmajflt
-   >> utime >> stime >> cutime >> cstime >> priority >> nice
-   >> O >> itrealvalue >> starttime >> vsize >> rss; // don't care about the rest
-   stat_stream.close();
-   long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // for x86-64 is configured to use 2MB pages
-   vm_usage = vsize /1073741824.0;
-   resident_set = rss * page_size_kb;
+args parse_args(int argc, char** argv){
+    (void)argc;
+    (void)argv;
+    args ret;
+    // 0 progNmae;
+    if(argc < 3){
+        printf("usage: %s 'goal_page_name' max_depth\n", argv[0]);
+    }
+
+    for(int i = 1; i < argc; i++){
+        if(i == 1){
+            ret.goal_page = string(argv[i]);
+            continue;
+        }else if(i == 2){
+            ret.max_n = atoi(argv[i]);
+            continue;
+        }
+
+        if(argv[i] == string("--single"))
+            ret.singleThread = true;
+
+        if(argv[i] == string("--sql_ip")){
+            if(argc == i){
+                cout << "must specify ip following '--sql_ip'\n";
+                exit(-1);
+            }
+            ret.mysql_ip = string(argv[++i]);
+            ret.useSql = true;
+            continue;
+        }
+
+        if(argv[i] == string("--sql_user")){
+            if(argc == i){
+                cout << "must specify user following '--sql_user'\n";
+                exit(-1);
+            }
+            ret.mysql_user = string(argv[++i]);
+            ret.useSql = true;
+            continue;
+        }
+
+        if(argv[i] == string("--sql_pass")){
+            if(argc == i){
+                cout << "must specify pass following '--sql_pass'\n";
+                exit(-1);
+            }
+            ret.mysql_pass = string(argv[++i]);
+            ret.useSql = true;
+            continue;
+        }
+
+        if(argv[i] == string("--ram")){
+            if(argc == i){
+                cout << "must specify ram in gb following '--ram'\n";
+                exit(-1);
+            }
+            ret.ramAmount = atof(argv[++i]);
+            continue;
+        }
+    }
+
+    //------------
+
+    if(ret.ramAmount == 0.0){
+        cout << "+----------------------------------------------------+\n";
+        cout << "| WARNING: Did not specify RAM amount...assuming 8Gb |\n";
+        cout << "|         (specify with --ram #inGb)                 |\n";
+        cout << "+----------------------------------------------------+\n";
+        ret.ramAmount = 8.0;
+    }
+    return ret;
+}
+
+args::args(){
+    goal_page = "";
+    max_n = 0;
+    ramAmount = 0;
+    singleThread = false;
+    useSql = true;
+    mysql_ip = "127.0.0.1";
+    mysql_user = "root";
+    mysql_pass = "";
+    resultsFile = "";
 }

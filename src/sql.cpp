@@ -6,10 +6,10 @@ void escape_special(string &s);
 
 mutex get_driver_mutex;
 
-SQLConnector::SQLConnector(){
+SQLConnector::SQLConnector(string ip, string user, string pass){
     lock_guard<mutex> guard(get_driver_mutex);
     driver =  get_driver_instance();
-    con = driver->connect("tcp://34.68.183.57:3306", "root", "exwmaCrxx8zvPCCl");
+    con = driver->connect("tcp://" + ip + ":3306", user, pass);
     stmt = con->createStatement();
     stmt->execute("USE results");
     stmt->execute("CREATE TABLE IF NOT EXISTS positive("

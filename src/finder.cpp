@@ -1,9 +1,9 @@
 #include "wikipedia.hpp"
 using namespace std;
-Finder::Finder(string search_for, int max_n){
-    sql_connection = new SQLConnector();
-    MAX = max_n-1;
-    goal_page = search_for;
+Finder::Finder(args Args){
+    sql_connection = new SQLConnector(Args.mysql_ip, Args.mysql_user, Args.mysql_pass);
+    MAX = Args.max_n-1;
+    goal_page = Args.goal_page;
     pages_folder = "pages";
     random_url = "https://en.wikipedia.org/wiki/Special:Random";
 

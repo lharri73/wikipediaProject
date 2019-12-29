@@ -35,8 +35,40 @@ class Link{
         const std::string get_href() const;
         const std::string get_title() const;
     protected:
-        std::string href;
+        std::string href;struct args{
+    public:
+        args();
+        std::string goal_page;
+        int max_n;
+        double ramAmount;
+        bool singleThread;
+
+        bool useSql;
+        std::string mysql_ip;
+        std::string mysql_user;
+        std::string mysql_pass;
+
+        std::string resultsFile;
+
+};
         std::string title;
+};
+
+struct args{
+    public:
+        args();
+        std::string goal_page;
+        int max_n;
+        double ramAmount;
+        bool singleThread;
+
+        bool useSql;
+        std::string mysql_ip;
+        std::string mysql_user;
+        std::string mysql_pass;
+
+        std::string resultsFile;
+
 };
 
 class Page{
@@ -61,7 +93,7 @@ class Page{
 class SQLConnector{
     public:
         // sql::ResultSet *res;
-        SQLConnector();
+        SQLConnector(std::string ip, std::string user, std::string pass);
         ~SQLConnector();
         void write(std::string *result);
     protected:
@@ -75,7 +107,7 @@ class SQLConnector{
 
 class Finder{
     public:
-        Finder(std::string search_for, int max_n);
+        Finder(args Args);
         ~Finder();
         Page *get_next_file();
         bool find_hitler_recursive(int n, Page* page, std::string path[]);
@@ -111,3 +143,5 @@ const std::string find_title(const GumboNode* root);
 void handler(int sig);
 
 void mem_usage(double &vm_usage, double& resident_set);
+
+args parse_args(int argc, char** argv);

@@ -19,10 +19,11 @@ class Thread{
 
 class ThreadPool {
     public:
-        ThreadPool(size_t threads, std::string goal_page, int max_n, volatile sig_atomic_t &gSignalStatus);
+        ThreadPool(size_t threads, args Args, volatile sig_atomic_t &gSignalStatus);
         void add_thread(Finder* finder);
         ~ThreadPool();
     private:
+        double ramAmount;
         std::vector<Thread*> threadVec;
 };
 

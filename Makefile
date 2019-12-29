@@ -1,5 +1,5 @@
 CFLAGS ?= -std=c++11 -g -rdynamic -Wall -Wextra -Wpedantic -Iinclude
-LFLAGS := $(shell pkg-config --libs gumbo) -LLIBDIR -Wl,-rpath -Wl,LIBDIR
+LFLAGS := -lgumbo -lmysqlcppconn -pthread
 
 # ------------------------
 # "make binaries" generates all required binaries
@@ -38,4 +38,4 @@ obj/threadpool.o: src/threadpool.cpp include/thread_pool.hpp  include/wikipedia.
 # Executables
 
 bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o obj/threadpool.o include/thread_pool.hpp include/wikipedia.hpp
-	g++ $(CFLAGS) $(LFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o obj/threadpool.o -lgumbo -lmysqlcppconn -pthread
+	g++ $(CFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o obj/threadpool.o $(LFLAGS)
