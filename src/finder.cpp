@@ -1,7 +1,7 @@
 #include "wikipedia.hpp"
 using namespace std;
 Finder::Finder(string search_for, int max_n){
-    sql_connection = nullptr;
+    sql_connection = new SQLConnector();
     MAX = max_n-1;
     goal_page = search_for;
     pages_folder = "pages";
