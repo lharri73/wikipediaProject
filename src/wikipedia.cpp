@@ -1,10 +1,9 @@
 #include "wikipedia.hpp"
-#include "thread_pool.h"
+#include "thread_pool.hpp"
 
 using namespace std;
 
 void cleanup();
-void multithread_start(string goa_page, int max_depth);
 
 volatile sig_atomic_t gSignalStatus = 0;
 void signal_handler(int signal){
@@ -22,43 +21,22 @@ int main(int argc, char** argv){
         exit(1);
     }
     if(argc >=4 && string(argv[3]) == "single"){
-        multithread_start(string(argv[1]), atoi(argv[2]));
+        Finder *finder = new Finder(string(argv[1]), atoi(argv[2]));
+        finder->begin();
+        delete finder;
     }else{
         cleanup();
         unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
 
         size_t numThreads = concurentThreadsSupported == 0 ? 1 : concurentThreadsSupported; // will return 0 if unable to detect
-        ThreadPool pool(numThreads);
+        cout << "Working with " << numThreads << " thread(s)\n";
+
+        ThreadPool(numThreads, string(argv[1]), atoi(argv[2]), gSignalStatus);
         
-        cout << "Working with " << numThreads << " threads\n";
-        double vm_usage, res_set;
-        vm_usage = 0.0;
-        while(true){
-            if(pool.tasks.size() < 1 && vm_usage < 32.0 * .5){
-                pool.enqueue(multithread_start, string(argv[1]), atoi(argv[2]));
-            }
-            mem_usage(vm_usage, res_set);
-            // cout << "--------------------------\n";
-            // cout << "     Memory Usage\n";
-            // cout << "VM: " << vm_usage << '\n';
-            // sleep(1);
-        }
-        // threads.push_back(thread(multithread_start, string(argv[1]), atoi(argv[2])));
         cout <<"\n----------------------------\n\tdetected sigint\n----------------------------\n";
     }
 
     return 0;
-}
-
-void multithread_start(string goal_page, int max_depth){
-    Finder *finder = new Finder(goal_page, max_depth, "results/results.csv");
-        finder->begin();
-    // while(gSignalStatus != 2){
-    //     if(finder->sigInt){
-    //         break;
-    //     }
-    // }
-    delete finder;
 }
 
 void cleanup(){

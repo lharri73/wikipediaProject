@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <vector>
 
@@ -16,7 +17,6 @@
 #include <signal.h>
 
 
-#include <thread>
 #include <unistd.h>
 #include <mutex>
 
@@ -75,7 +75,7 @@ class SQLConnector{
 
 class Finder{
     public:
-        Finder(std::string search_for, int max_n, std::string resultsFile);
+        Finder(std::string search_for, int max_n);
         ~Finder();
         Page *get_next_file();
         bool find_hitler_recursive(int n, Page* page, std::string path[]);
@@ -93,7 +93,6 @@ class Finder{
         std::string goal_page;
         std::string random_url;
         std::string pages_folder;
-        std::string results_file;
 
         Page* current_page;
 };

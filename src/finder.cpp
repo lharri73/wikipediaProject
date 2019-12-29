@@ -1,12 +1,10 @@
 #include "wikipedia.hpp"
 using namespace std;
-mutex g_pages_mutex;
-Finder::Finder(string search_for, int max_n, string resultsFile){
-    sql_connection = new SQLConnector();
+Finder::Finder(string search_for, int max_n){
+    sql_connection = nullptr;
     MAX = max_n-1;
     goal_page = search_for;
     pages_folder = "pages";
-    results_file = resultsFile;
     random_url = "https://en.wikipedia.org/wiki/Special:Random";
 
     // values used for testing
