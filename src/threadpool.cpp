@@ -12,17 +12,27 @@ ThreadPool::ThreadPool(size_t threads, args Args, volatile sig_atomic_t &gSignal
     }
 
     double vRam, ret_usage;
-
+    Thread* oldThread;
     while(gSignalStatus !=2){
         mem_usage(vRam, ret_usage);
-        for(size_t i = 0; i < threads; i++){
-            if(!threadVec[i]->isRunning() && vRam < .75 * ramAmount){
+        
+        if(vRam < .75 * ramAmount && threadVec.size() < threads){
+            finder = new Finder(Args);
+            threadVec.push_back(new Thread(finder));
+        }
+        
+        for(size_t i = 0; i < threadVec.size(); i++){
+            if(!threadVec[i]->isRunning()){
                 cout << "restarting thread " << i << '\n';
-                delete threadVec[i];
-                if(!threadVec[i]->isSigint()){
-                    finder = new Finder(Args);
-                    threadVec[i] = new Thread(finder);
+                oldThread = threadVec[i];
+                // if(!threadVec[i]->isSigint()){
+                //     finder = new Finder(Args);
+                //     threadVec[i] = new Thread(finder);
+                // }
+                if(threadVec[i]->isSigint() || vRam > .75 * ramAmount){
+                    threadVec.erase(threadVec.begin() + i);
                 }
+                delete oldThread;
             }
         }
     }
