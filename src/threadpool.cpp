@@ -29,10 +29,12 @@ ThreadPool::ThreadPool(size_t threads, args Args, volatile sig_atomic_t &gSignal
                 //     finder = new Finder(Args);
                 //     threadVec[i] = new Thread(finder);
                 // }
-                if(threadVec[i]->isSigint() || vRam > .75 * ramAmount){
-                    threadVec.erase(threadVec.begin() + i);
+                if(threadVec[i]->isSigint()){
+		    gSignalStatus = 2;
                 }
+                threadVec.erase(threadVec.begin() + i);
                 delete oldThread;
+		i--;
             }
         }
     }
