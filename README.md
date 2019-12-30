@@ -3,8 +3,6 @@ This tool was started as a project that I planned to finish in a couple of
 hours. Needles to say, it ended up taking me a lot longer to finish simply 
 because I kept seeing potential to make it better and better. 
 
-
-
 ## Building From Source
 
 This project was created using the c++98 standard, but with the addition of multithreading, the libraries added in c++11 made this significantly easier. 
@@ -25,7 +23,7 @@ NOTE that This project requires the use of [Google's Gumbo parser](https://githu
 repository as a submodule. 
 
 ```bash
-    git clone https://github.com/lharri73/wikipediaProject
+    git clone https://github.com/lharri73/wikipediaProject.git
     cd wikipediaProject
     git submodule init
     git submodule update
