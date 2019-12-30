@@ -13,7 +13,7 @@ because I kept seeing potential to make it better and better.
 
 This project was created using the C++98 standard, but with the addition of multithreading, the libraries added in C++11 made this significantly easier. 
 
-NOTE that This project requires the use of [Google's Gumbo parser](https://github.com/google/gumbo-parser). 
+NOTE: This project requires the use of [Google's Gumbo parser](https://github.com/google/gumbo-parser). 
 
 1. Install dependencies for the gumbo parser
 
@@ -35,7 +35,7 @@ repository as a submodule.
     git submodule update
 ```
 4. Install the Gumbo parser. Detailed instructions can be found on [the 
-Gumbo repository](https://github.com/google/gumbo-parser), but I'll leave the sparknotes version here
+Gumbo repository](https://github.com/google/gumbo-parser), but I'll leave the spark notes version here
 
 ```bash
     cd lib/gumbo
