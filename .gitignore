@@ -6,3 +6,4 @@ __pycache__/
 images/*
 !images/.keep
 pages/
+node_modules/
