@@ -1,11 +1,17 @@
-# Wikipedia Mapper
-This tool was started as a project that I planned to finish in a couple of 
+# Wikipedia Game Mapper
+
+The Wikipedia Game Mapper is a tool that crawls through a random 
+wikipedia page (and all pages that it links to) until it can find 
+the goal page that is provided as input. The mapper performs a 
+breadth-first search, only going n levels deep, serving as a brute force approach to solving [The Wiki Game](https://en.wikipedia.org/wiki/Wikipedia:Wiki_Game).
+
+This started as a project that I planned to finish in a couple of 
 hours. Needles to say, it ended up taking me a lot longer to finish simply 
 because I kept seeing potential to make it better and better. 
 
-## Building From Source
+### Building From Source
 
-This project was created using the c++98 standard, but with the addition of multithreading, the libraries added in c++11 made this significantly easier. 
+This project was created using the C++98 standard, but with the addition of multithreading, the libraries added in C++11 made this significantly easier. 
 
 NOTE that This project requires the use of [Google's Gumbo parser](https://github.com/google/gumbo-parser). 
 
@@ -14,12 +20,12 @@ NOTE that This project requires the use of [Google's Gumbo parser](https://githu
 ```bash
     sudo apt install libtool automake
 ```
-1. Install mysql header files
+2. Install mysql header files
 
 ```bash
     sudo apt install libmysqlcppconn-dev
 ```
-1. Clone and set up this repository. The gumbo parser is added to this 
+3. Clone and set up this repository. The gumbo parser is added to this 
 repository as a submodule. 
 
 ```bash
@@ -28,7 +34,7 @@ repository as a submodule.
     git submodule init
     git submodule update
 ```
-1. Install the Gumbo parser. Detailed instructions can be found on [the 
+4. Install the Gumbo parser. Detailed instructions can be found on [the 
 Gumbo repository](https://github.com/google/gumbo-parser), but I'll leave the sparknotes version here
 
 ```bash
@@ -38,19 +44,19 @@ Gumbo repository](https://github.com/google/gumbo-parser), but I'll leave the sp
     make
     sudo make install
 ```
-1. Build the wikipedia project. 
+5. Build the wikipedia project. 
 ```bash
     cd ../../ ## back to the wikipediaProject directory (or wherever you cloned the repo to)
     make
 ```
 
-## Usage
+### Usage
 
 ```bash
     ./bin/wikipedia "goal_page_name" max_search_depth
 ```
 
-### Flags
+#### Flags
 - `--single` : Will force the program to only use one thread
 - `--sql_ip ###.###.###.###` : Specify the mysql server ip address to use. default: localhost
 - `--sql_user ####` : Specify the mysql user to use. default: root
