@@ -9,10 +9,9 @@ This started as a project that I planned to finish in a couple of
 hours. Needles to say, it ended up taking me a lot longer to finish simply 
 because I kept seeing potential to make it better and better. 
 
-### Building From Source
+## Building From Source
 
 This project was created using the C++98 standard, but with the addition of multithreading, the libraries added in C++11 made this significantly easier. 
-
 
 NOTE: This project requires the use of [Google's Gumbo parser](https://github.com/google/gumbo-parser). 
 
@@ -51,16 +50,23 @@ Gumbo repository](https://github.com/google/gumbo-parser), but I'll leave the sp
     make
 ```
 
-### Usage
+## Usage
 
 ```bash
     ./bin/wikipedia "goal_page_name" max_search_depth
 ```
 
-#### Flags
-- `--single` : Will force the program to only use one thread
-- `--sql_ip ###.###.###.###` : Specify the mysql server ip address to use. default: localhost
-- `--sql_user ####` : Specify the mysql user to use. default: root
-- `sql_pass ###` : Specify the mysql password. default: ""
-- `ram #.#` : Specify how much ram to use in Gb. default: 8.0Gb
-  - NOTE: this is not a hard maximum, this is a target value. When it reaches 75% of this value, it will not spawn anymore threads until it drops below 75% of this value. 
+### Flags
+| Flag               | Description                           | Default   |
+|--------------------|---------------------------------------|-----------|
+| `--single`         | Disable multithreading                | False     |
+| `--sql_ip #.#.#.#` | Set the ip of the MySQL server        | 127.0.0.1 |
+| `--sql_user XXX`   | Set the user of the MySQL server      | root      |
+| `--sql_pass XXX`   | Set the password of the MySQL server  | ""        |
+| `--ram #.#`        | Set the amount of ram to use (in GB)  | 8.0       |
+
+- NOTE: `--ram` Does not set a hard limit. The program will not create threads until memory usage is below 50% of this number.
+
+## License 
+
+GPLv2
