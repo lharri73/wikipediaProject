@@ -13,17 +13,22 @@ ThreadPool::ThreadPool(size_t threads, args Args, volatile sig_atomic_t &gSignal
 
     double vRam, ret_usage;
     Thread* oldThread;
+    int j = 0;
     while(gSignalStatus !=2){
+	    if(++j >= 10000) {
+		    cout << threadVec.size() << '\n';
+		    j = 0;
+		}
         mem_usage(vRam, ret_usage);
-        
-        if(vRam < .75 * ramAmount && threadVec.size() < threads){
+       	if(vRam < .75 * ramAmount && threadVec.size() < threads){
+	    cout << "starting new thread\n";
             finder = new Finder(Args);
             threadVec.push_back(new Thread(finder));
         }
         
         for(size_t i = 0; i < threadVec.size(); i++){
             if(!threadVec[i]->isRunning()){
-                cout << "restarting thread " << i << '\n';
+                cout << "stopping thread " << i << '\n';
                 oldThread = threadVec[i];
                 // if(!threadVec[i]->isSigint()){
                 //     finder = new Finder(Args);
