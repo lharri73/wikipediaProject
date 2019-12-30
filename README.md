@@ -13,6 +13,7 @@ because I kept seeing potential to make it better and better.
 
 This project was created using the C++98 standard, but with the addition of multithreading, the libraries added in C++11 made this significantly easier. 
 
+
 NOTE: This project requires the use of [Google's Gumbo parser](https://github.com/google/gumbo-parser). 
 
 1. Install dependencies for the gumbo parser
