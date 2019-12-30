@@ -1,4 +1,4 @@
-CFLAGS ?= -std=c++11 -g -rdynamic -Wall -Wextra -Wpedantic -Iinclude
+CFLAGS ?= -std=c++11 -g -rdynamic -Wall -Wextra -Wpedantic -Iinclude -lstdc++fs
 LFLAGS := -lgumbo -lmysqlcppconn -pthread
 
 # ------------------------
@@ -32,7 +32,7 @@ obj/uuid.o: src/uuid.cpp include/wikipedia.hpp
 obj/sql.o: src/sql.cpp include/wikipedia.hpp
 	g++ $(CFLAGS) -c -o obj/sql.o src/sql.cpp
 
-obj/threadpool.o: src/threadpool.cpp include/thread_pool.hpp  include/wikipedia.hpp
+obj/threadpool.o: src/threadpool.cpp include/thread_pool.hpp include/wikipedia.hpp
 	g++ $(CFLAGS) -c -o obj/threadpool.o src/threadpool.cpp
 # -------------------------
 # Executables
