@@ -20,7 +20,7 @@ var paths = {
 };
 
 gulp.task('default', ['build', 'start static server', 'watch changes']);
-gulp.task('build', ['make dist', 'run browserify', 'copy dist', 'compile less']);
+gulp.task('build', ['make dist', 'run browserify', 'copy dist', 'compile less', 'move static data']);
 
 gulp.task('run browserify', runBrowserify);
 gulp.task('compile less', compileLess);
@@ -28,6 +28,16 @@ gulp.task('make dist', makeDist);
 gulp.task('copy dist', copyDist);
 gulp.task('watch changes', watchChanges);
 gulp.task('start static server', startStaticServer);
+gulp.task('move static data', moveStaticData);
+
+function moveStaticData(){
+  var fs = require('fs');
+  if (!fs.existsSync('./dist/data')) {
+    fs.mkdirSync('./dist/data');
+  }
+  fs.copyFileSync('./data/links.bin', './dist/data/links.bin');
+  fs.copyFileSync('./data/positions.bin', './dist/data/positions.bin');
+}
 
 function runBrowserify() {
   var fs = require('fs');
