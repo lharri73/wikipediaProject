@@ -5,5 +5,5 @@ gulp build
  git init
  git add .
  git commit -m "Deployed to Github Pages"
- git push --force git@github.com:anvaka/allnpmviz3d.git master:gh-pages
+ git push --force git@github.com/lharri73/wikipediaProject origin/gh-pages
 )

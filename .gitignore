@@ -1,5 +1,3 @@
-*.webpage
-*.html
 __pycache__/
 .DS_Store
 *.tar
@@ -7,4 +5,7 @@ images/*
 !images/.keep
 pages/
 make_ngraph/node_modules/
+
+vis/node_modules/
+vis/dist/*
 vis/node_modules/

@@ -73152,6 +73152,10 @@ var subgraph = require('./model/subgraph');
 var config = require('./config.js');
 var manifestEndpoint = config.dataUrl + 'manifest.json?nocache=' + (+new Date());
 
+var hardLocation = new Promise((resolve, reject) =>{
+  resolve('');
+});
+
 module.exports = function($http) {
   var graph = createGraph({
     uniqueLinkId: false // don't need unique link id, since we are not a multigraph
