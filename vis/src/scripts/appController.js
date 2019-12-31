@@ -51,7 +51,7 @@ function AppController($scope, $http) {
   }
 
   // when labels are ready search control can start using them:
-  graphModel.on('labelsReady', setGraphOnScope);
+  graphModel.on('levelsReady', setGraphOnScope);
 
   // when someone needs to show only part of the graph, they fire 'subgraphRequested' event:
   appEvents.on('subgraphRequested', showSubgraph);

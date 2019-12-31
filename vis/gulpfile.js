@@ -37,6 +37,9 @@ function moveStaticData(){
   }
   fs.copyFileSync('./data/links.bin', './dist/data/links.bin');
   fs.copyFileSync('./data/positions.bin', './dist/data/positions.bin');
+  fs.copyFileSync('./data/labels.json', './dist/data/labels.json');
+  fs.copyFileSync('./data/clickLevels.json', './dist/data/clickLevels.json');
+  fs.copyFileSync('./data/sizes.json', './dist/data/sizes.json');
 }
 
 function runBrowserify() {

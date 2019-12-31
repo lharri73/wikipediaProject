@@ -12,7 +12,7 @@ function messageController($scope) {
 
   if (webglEnabled) {
     graphModel.on('loadingConnections', setStatus('Loading connections...'));
-    graphModel.on('loadingNodes', setStatus('Loading packages...'));
+    graphModel.on('loadingNodes', setStatus('Loading Pages...'));
     graphModel.on('coreReady', showHint);
     graphModel.on('downloadFailed', showDownloadError);
   } else {

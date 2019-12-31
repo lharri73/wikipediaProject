@@ -8,7 +8,7 @@ var config = require('./config.js');
 var manifestEndpoint = config.dataUrl + 'manifest.json?nocache=' + (+new Date());
 
 var hardLocation = new Promise((resolve, reject) =>{
-  resolve('');
+  resolve('//lharri73.github.io/wikipediaProject/data/positions.bin');
 });
 
 module.exports = function($http) {
@@ -18,14 +18,18 @@ module.exports = function($http) {
   var filteredGraph = graph;
   var labels;
   var dataEndpoint;
-
-  $http.get(manifestEndpoint)
-    .then(setDataEndpoint)
+  var attributes = {
+    links: false,
+    labels: false,
+    sizes: false,
+    levels: false,
+  }
+  hardLocation
+    // .then(setDataEndpoint)
     .then(loadPositions)
     .then(convertToPositions)
     .then(addNodesToGraph)
-    .then(downloadLinksAsync)
-    .then(downloadLabelsAsync)
+    .then(downloadAttributesAsync)
     .catch (reportError);
 
   var model = {
@@ -107,38 +111,19 @@ module.exports = function($http) {
     return labels.indexOf(packageName);
   }
 
-  function downloadLinksAsync() {
+  function downloadAttributesAsync() {
     model.fire('loadingConnections');
 
     // Note: we are not returning a promise here. This is supposed to be
     // fire and forget call.
-    $http.get(dataEndpoint + 'links.bin', {
+    $http.get('//lharri73.github.io/wikipediaProject/data/links.bin', {
       responseType: "arraybuffer"
     })
       .then(addLinksToGraph)
+      .then(downloadLabelsAsync)
+      .then(downloadSizesAsync)
+      .then(downloadClickLevelsAsync)
       .then(notifyCoreReady);
-  }
-
-  function downloadLabelsAsync() {
-    $http.get(dataEndpoint + 'labels.json')
-      .then(addLabelsToGraph);
-  }
-
-
-  function addLabelsToGraph(response) {
-    labels = response.data;
-    labels.forEach(function(label, idx) {
-      addToGraph(idx, 'label', label);
-    });
-    model.fire('labelsReady', labels);
-  }
-
-  function addNodesToGraph(positions) {
-    positions.forEach(function(pos, idx) {
-      addToGraph(idx, 'position', pos);
-    });
-
-    model.fire('nodesReady', model);
   }
 
   function addLinksToGraph(res) {
@@ -152,22 +137,79 @@ module.exports = function($http) {
         graph.addLink(lastFromId, id - 1);
       }
     }
-
-    model.fire('linksReady', model);
+    attributes.links = true;
     return graph;
+  }
+
+  function downloadLabelsAsync() {
+    $http.get('//lharri73.github.io/wikipediaProject/data/labels.json')
+      .then(addLabelsToGraph);
+  }
+
+  function downloadSizesAsync() {
+    $http.get('//lharri73.github.io/wikipediaProject/data/sizes.json')
+      .then(addSizesToGraph);
+  }
+
+  function addSizesToGraph(res){
+    sizes = res.data;
+    sizes.forEach(function(size, idx){
+      addToGraph(idx, 'size', size);
+    });
+    attributes.sizes = true;
+    notify_if_needed();
+  }
+
+  function downloadClickLevelsAsync() {
+    $http.get('//lharri73.github.io/wikipediaProject/data/clickLevels.json')
+      .then(addClickLevelsToGraph);
+  }
+
+  function addClickLevelsToGraph(res) {
+    levels = res.data;
+    levels.forEach(function(level, idx){
+      addToGraph(idx, 'clickLevel', level);
+    })
+    attributes.levels = true;
+    notify_if_needed();
+  }
+
+  function addLabelsToGraph(response) {
+    labels = response.data;
+    labels.forEach(function(label, idx) {
+      addToGraph(idx, 'label', label);
+    });
+    
+    attributes.labels = true;
+    notify_if_needed();
+  }
+
+  function addNodesToGraph(positions) {
+    positions.forEach(function(pos, idx) {
+      addToGraph(idx, 'position', pos);
+    });
+
+    model.fire('nodesReady', model);
   }
 
   function notifyCoreReady() {
     model.fire('coreReady');
   }
 
+  function notify_if_needed(){
+    if(attributes.links && attributes.sizes && attributes.levels && attributes.labels){
+      model.fire('allReady', model);
+    }
+  }
+
+
   function setDataEndpoint(manifestResponse) {
     var manifest = manifestResponse.data;
     dataEndpoint = config.dataUrl + manifest.last + '/'
   }
 
-  function loadPositions() {
-    return $http.get(dataEndpoint + 'positions.bin', {
+  function loadPositions(locationResponse) {
+    return $http.get(locationResponse, {
       responseType: 'arraybuffer'
     })
   }

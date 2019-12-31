@@ -2,7 +2,7 @@
   <div class="search col-xs-12 col-sm-6 col-md-4" ng-controller="searchController">
     <form class="search-form" role="search" ng-class="{focused: hasFocus}" ng-submit="formSubmitted($event)">
       <div class="input-group">
-        <input type="text" ng-focus="hasFocus = true; showListOfPackages=true;" ng-blur="hasFocus = false" ng-model="selectedPackage" ng-change="searchPatternChanged(selectedPackage)" class="form-control no-shadow" placeholder="find packages">
+        <input type="text" ng-focus="hasFocus = true; showListOfPackages=true;" ng-blur="hasFocus = false" ng-model="selectedPackage" ng-change="searchPatternChanged(selectedPackage)" class="form-control no-shadow" placeholder="Find Pages">
         <span class="input-group-btn">
         <button class="btn" tabindex="-1" type="button"><span class="glyphicon glyphicon-search"></span>
         </button>

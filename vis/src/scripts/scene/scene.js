@@ -23,6 +23,7 @@ function sceneView(graphModel) {
   var shouldShowLinks = linkView.linksVisible();
   var autoPilot = createAutoPilot(view.getCamera());
   var jiggler;
+  var linksDone = false;
 
   var api = eventify({
     search: search,
@@ -46,7 +47,8 @@ function sceneView(graphModel) {
   view.onrender(render);
 
   graphModel.on('nodesReady', nodeView.render);
-  graphModel.on('linksReady', function(graphModel) {
+  graphModel.on('allReady', function(graphModel) {
+    // console.log(linksDone);
     linkView.render(graphModel);
     adjustNodeSize(graphModel);
   });
@@ -110,14 +112,38 @@ function sceneView(graphModel) {
   }
 
   function adjustNodeSize(model) {
+    const colorMap = {
+      0: 0xa4bef4,
+      1: 0x59ff6a,
+      2: 0xfcb335,
+      3: 0xeb4034
+    }
     var graph = model.getGraph();
     graph.forEachNode(function(node) {
-      var outCount = 0;
-      node.links.forEach(function(link) {
-        if (link.toId === node.id) outCount += 1;
-      });
-      var size = (100 / 7402) * outCount + 15;
-      nodeView.setNodeUI(node.id, 0xffffff, size);
+      // var outCount = 0;
+      // node.links.forEach(function(link) {
+      //   if (link.toId === node.id) outCount += 1;
+      // });
+      // var size = (100 / 7402) * outCount + 15;
+      // console.log(size);
+      var color = colorMap[node.data.clickLevel];
+      var size;
+      if(node.data.size > 10000){
+        size = 1000;
+      }else{
+        size = node.data.size/5 < 1 ? 1 : node.data.size/5;
+      }
+      // console.log(color, size);
+
+      // switch (node.data.clickLevel) {
+      //   case value:
+          
+      //     break;
+      
+      //   default:
+      //     break;
+      // }
+      nodeView.setNodeUI(node.id, 0xff1100, size);
     });
     nodeView.refresh();
   }

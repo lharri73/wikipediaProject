@@ -61,6 +61,7 @@ function result(first, second, third, fourth){
 }
 
 var resultsList = [];
+console.log("reading csv file");
 
 fs.createReadStream('data/Hitler.csv')
   .pipe(csv({headers: false}))
@@ -74,7 +75,7 @@ fs.createReadStream('data/Hitler.csv')
         graph.addNode(nodeNames[name].name, {
             id: name,
             size: nodeNames[name].size,
-            color: colorMap[nodeNames[name].clickLevel],
+            clickLevel: nodeNames[name].clickLevel,
         });
     }
     console.log(graph.getNodesCount(), "Nodes processed");
@@ -97,7 +98,20 @@ fs.createReadStream('data/Hitler.csv')
         }
     }
     console.log("...done");
+
+    // We must write the click levels and size by hand because ngraph.tobinary won't do it for us
     console.log("saving");
+    sizes = [];
+    clickLevels = [];
+    graph.forEachNode(saveSize);
+    function saveSize(node){
+        sizes.push(node.data.size);
+        clickLevels.push(node.data.clickLevel);
+    }
+    
+    fs.writeFileSync('data/sizes.json', JSON.stringify(sizes), 'utf8');
+    fs.writeFileSync('data/clickLevels.json', JSON.stringify(clickLevels), 'utf8');
+    // the rest can be handled by ngraph.tobinary
     save(graph, {
         outDir: 'data', // folder where to save results. '.' by default
         labels: 'labels.json', // name of the labels file. labels.json by default

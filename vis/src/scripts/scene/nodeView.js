@@ -21,7 +21,8 @@ function nodeView(scene) {
     setNodeUI: setNodeUI,
     getBoundingSphere: getBoundingSphere,
     refresh: refresh,
-    jiggle: jiggle
+    jiggle: jiggle,
+    vertexColors: THREE.vertexColors
   };
 
   function jiggle() {
@@ -106,7 +107,9 @@ function nodeView(scene) {
       points[idx + 1] = position.y;
       points[idx + 2] = position.z;
 
-      setNodeUI(node.id, 0xffffff, 15);
+      // console.log(node.data);
+
+      setNodeUI(node.id, 0xff1100, 10);
     }
   }
 }
@@ -128,11 +131,11 @@ function createParticleMaterial() {
   var uniforms = {
     color: {
       type: "c",
-      value: new THREE.Color(0xffffff)
+      value: new THREE.Color(0xff1100)
     },
     texture: {
       type: "t",
-      value: THREE.ImageUtils.loadTexture("textures/circle.png")
+      value: THREE.ImageUtils.loadTexture("textures/ball.png")
     }
   };
 

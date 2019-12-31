@@ -5,5 +5,5 @@ gulp build
  git init
  git add .
  git commit -m "Deployed to Github Pages"
- git push --force git@github.com/lharri73/wikipediaProject origin/gh-pages
+ git push --force git@github.com:lharri73/wikipediaProject.git master:gh-pages
 )
