@@ -16,7 +16,7 @@
     <div class="package-preview ng-cloak container-fluid row" ng-show='showPackagePreview'>
       <div class='hidden-xs'>
         <div class="col-xs-6">
-          <a href='#' ng-href="{{'https://www.npmjs.org/package/' + package.name}}" target="_blank"><h4 title='{{package.name}}'>{{package.name}}</h4></a>
+          <a href='#' ng-href="{{'https://en.wikipedia.org/wiki/' + package.name}}" target="_blank"><h4 title='{{package.name}}'>{{package.name}}</h4></a>
         </div>
         <div class="col-xs-3">
           <div class="row">
@@ -33,7 +33,7 @@
       </div>
       <div class="visible-xs-block">
         <div class="col-xs-12 info-block">
-          <a href='#' ng-href="{{'https://www.npmjs.org/package/' + package.name}}" target="_blank">{{package.name}}</a>
+          <a href='#' ng-href="{{'https://en.wikipedia.org/wiki/' + package.link}}" target="_blank">{{package.name}}</a>
           has
           <a href='#' ng-click='showSubgraph(package.name, "dependencies")'>{{package.dependencies | number}}</a>
           dependencies, and

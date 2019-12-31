@@ -51,7 +51,7 @@ function AppController($scope, $http) {
   }
 
   // when labels are ready search control can start using them:
-  graphModel.on('levelsReady', setGraphOnScope);
+  graphModel.on('labelsReady', setGraphOnScope);
 
   // when someone needs to show only part of the graph, they fire 'subgraphRequested' event:
   appEvents.on('subgraphRequested', showSubgraph);
@@ -109,10 +109,12 @@ function AppController($scope, $http) {
     if (!node) return; // no such package found
 
     var depsInfo = getDependenciesInfo(node.id, node.links);
+    var link = packageName.replace(' ', '_');
     $scope.package = {
       name: packageName,
       dependencies: depsInfo.dependencies,
-      dependents: depsInfo.dependents
+      dependents: depsInfo.dependents,
+      link: link,
     };
     $scope.showPackagePreview = true;
 

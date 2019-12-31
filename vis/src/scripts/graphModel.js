@@ -181,6 +181,7 @@ module.exports = function($http) {
     });
     
     attributes.labels = true;
+    model.fire('labelsReady', model);
     notify_if_needed();
   }
 
