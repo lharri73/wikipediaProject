@@ -1,0 +1,267 @@
+@import "../../node_modules/bootstrap/less/bootstrap.less";
+
+html {
+  -webkit-font-smoothing: antialiased;
+}
+
+body,
+html,
+canvas {
+  background: black;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.message {
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  right: 10px;
+  color: white;
+  font-size: 18px;
+  background: black;
+  padding: 10px;
+}
+
+.loading-log {
+  z-index: 1;
+  position: absolute;
+  background: black;
+  top: 60px;
+  padding: 10px;
+  color: white;
+  strong {
+    color: deeppink;
+  }
+  h2 {
+    margin-left: 7px;
+  }
+  .close {
+    opacity: 0.5;
+    color: white;
+    position: absolute;
+    top: 0;
+    right: 16px;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+@crosshair-r: 100px;
+
+.steering {
+  display: none;
+  position: absolute;
+  pointer-events: none;
+  width: 2 * @crosshair-r;
+  height: 2 * @crosshair-r;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  margin-left: -@crosshair-r;
+  margin-top: -@crosshair-r;
+  border-radius: 2 * @crosshair-r;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  .inner {
+    position: absolute;
+    width: @crosshair-r;
+    height: @crosshair-r;
+    top: 50%;
+    left: 50%;
+    margin-left: -@crosshair-r/2;
+    margin-top: -@crosshair-r/2;
+    border-radius: @crosshair-r;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .steering-help {
+    position: fixed;
+    color: rgba(255,255,255,0.9);
+    bottom: 12px;
+    font-family: 'PT Sans', sans-serif;
+    font-size: large;
+    left: 50%;
+    margin-left: -187px;
+  }
+}
+.search {
+  position: absolute;
+  top: 12px;
+  z-index: 1;
+  .search-results {
+    padding-top: 12px;
+    background: rgba(0, 0, 0, 0.85);
+    h4 {
+      margin: 0 0 5px 0;
+      padding: 0 0 5px 20px;
+    }
+  }
+
+  .scroll-wrapper {
+    border-top: 1px solid #808080;
+    height: 250px;
+    overflow: hidden;
+  }
+
+  ul {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 100%;
+    height: 100%;
+    color: white;
+    list-style: none;
+    margin: 0;
+    box-sizing: content-box;
+    padding-top: 0px;
+    padding-right: 20px;
+    padding-bottom: 0;
+    padding-left: 0;
+    li {
+      height: 25px;
+      a {
+        opacity: 0.5;
+        color: white;
+        text-decoration: none;
+        width: 100%;
+        height: 100%;
+        display: block;
+        margin: 0;
+        padding: 0;
+        padding-left: 20px;
+        line-height: 25px;
+        white-space: nowrap;
+        &:hover,
+        &:focus{
+          text-decoration:none;
+          opacity: 1;
+          background:rgba(26, 26, 26, 0.95);
+        }
+      }
+    }
+  }
+  .search-form {
+    input {
+      width: 100%;
+      background: rgba(26, 26, 26, 0.5);
+      color: white;
+      border-radius: 0;
+      border: 0
+    }
+    .input-group {
+      border: 1px solid #808080;
+      &:hover,
+      &.focused {
+        border-color: white;
+        button.btn {
+          background: #66afe9;
+        }
+      }
+    }
+    button.btn {
+      color: white;
+      border-radius: 0;
+      background: #808080;
+    }
+  }
+  h4 {
+    color: white;
+    .small {
+      opacity: 0.5;
+    }
+  }
+}
+
+.package-preview {
+  width: 350px;
+  bottom: 12px;
+  left: 12px;
+  position: absolute;
+  z-index: 1;
+  font-family: 'PT Sans', sans-serif;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  h4 {
+    margin: 0;
+    font-family: 'PT Sans', sans-serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  h2 {
+    margin: 0;
+    text-align: center;
+    font-family: 'PT Sans', sans-serif;
+  }
+  .small {
+    text-align: center;
+    color: #999;
+  }
+  @media (max-width: @screen-sm-min) {
+    width: 100%;
+  }
+  .info-block {
+    a {
+      font-size: 18px;
+    }
+  }
+}
+
+.ng-cloak {
+  display: none !important;
+}
+
+h4 {
+  font-family: 'PT Sans', sans-serif;
+}
+
+.adhoc-tooltip {
+  position:absolute;
+  z-index:1;
+  color: white;
+  background:black;
+  pointer-events:none;
+  padding: 4px 10px;
+}
+
+.share {
+  position: absolute;
+  right: 12px;
+  font-size: 12px;
+  top: 12px;
+  z-index: 1;
+
+  p {
+    margin-bottom: 2px;
+    text-align: right;
+    a {
+      color: #808080;
+    }
+    a:hover, a:focus {
+      color: #66AFE9;
+      text-decoration: none;
+    }
+  }
+}
+@media only screen and (max-width : 775px) {
+  .share {
+    bottom: 0;
+    right: 0;
+    font-size: 12px;
+    width: 100%;
+    text-align: right;
+    top: inherit;
+    padding-left: 19px;
+    background-color: black;
+
+    p {
+      display: inline-block;
+      padding-right: 7px;
+    }
+  }
+}

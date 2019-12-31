@@ -6,4 +6,5 @@ __pycache__/
 images/*
 !images/.keep
 pages/
-node_modules/
+make_ngraph/node_modules/
+vis/node_modules/

@@ -1,0 +1,19 @@
+{
+  "name": "make_ngraph",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "version": "1.0.0",
+  "description": "Used to generate an ngraph from the Hitler csv file",
+  "repository": "https://github.com/lharri73/wikipediaProject.git",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "csv-parser": "^2.3.2",
+    "fs": "0.0.1-security",
+    "ngraph.graph": "^19.0.1",
+    "ngraph.tobinary": "^1.0.2",
+    "nodemon": "^2.0.2"
+  }
+}
