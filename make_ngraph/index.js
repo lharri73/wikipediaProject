@@ -69,14 +69,39 @@ fs.createReadStream('data/Hitler.csv')
   })
   .on('end', () => {
     console.log('CSV file successfully processed');
+    console.log("adding nodes");
     for(name in nodeNames){
-        console.log("adding nodes");
         graph.addNode(nodeNames[name].name, {
             id: name,
             size: nodeNames[name].size,
             color: colorMap[nodeNames[name].clickLevel],
         });
     }
-    console.log(graph.getNodesCount());
-    console.log("done");
+    console.log(graph.getNodesCount(), "Nodes processed");
+    console.log("Adding Links");
+    
+    for(result of resultsList){
+        if(result.second == "") continue; //we randomly clicked on hitler...Interesting...?
+        else if(result.third == ""){
+            // it took only one click to get there
+            graph.addLink(result.first, result.second);
+        }else if(result.fourth == ""){
+            // it took only 2 clicks to get there
+            graph.addLink(result.first, result.second);
+            graph.addLink(result.second, result.third);
+        }else{
+            // all fields are populated
+            graph.addLink(result.first, result.second);
+            graph.addLink(result.second, result.third);
+            graph.addLink(result.third, result.fourth);
+        }
+    }
+    console.log("...done");
+    console.log("saving");
+    save(graph, {
+        outDir: 'data', // folder where to save results. '.' by default
+        labels: 'labels.json', // name of the labels file. labels.json by default
+        meta: 'meta.json', // name of the file with meta information. meta.json by default
+        links: 'links.bin' // file name for links array. links.bin by default
+      });
 });
