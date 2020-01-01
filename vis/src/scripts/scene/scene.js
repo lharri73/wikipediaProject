@@ -131,7 +131,7 @@ function sceneView(graphModel) {
       if(node.data.size > 10000){
         size = 1000;
       }else{
-        size = node.data.size/5 < 1 ? 1 : node.data.size/5;
+        size = node.data.size/5 < 10 ? 10 : node.data.size/5;
       }
       // console.log(color, size);
 
@@ -143,7 +143,7 @@ function sceneView(graphModel) {
       //   default:
       //     break;
       // }
-      nodeView.setNodeUI(node.id, 0xff1100, size);
+      nodeView.setNodeUI(node.id, color, size);
     });
     nodeView.refresh();
   }

@@ -100,6 +100,7 @@ function nodeView(scene) {
     scene.add(particleSystem);
 
     function addToPointsArray(node) {
+      // fist time nodes are added
       var idx = node.id * 3;
       var position = node.data.position;
 
@@ -124,14 +125,14 @@ function createParticleMaterial() {
     },
     customColor: {
       type: 'c',
-      value: null
+      value: new THREE.Color(0xff1100)
     }
   };
 
   var uniforms = {
     color: {
       type: "c",
-      value: new THREE.Color(0xff1100)
+      value: new THREE.Color(0x010101)
     },
     texture: {
       type: "t",
