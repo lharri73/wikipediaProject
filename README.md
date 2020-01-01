@@ -9,6 +9,21 @@ This started as a project that I planned to finish in a couple of
 hours. Needles to say, it ended up taking me a lot longer to finish simply 
 because I kept seeing potential to make it better and better. 
 
+## Visualization
+
+This generated 56,000 paths from the random article page to the 
+Adolf Hitler page with over 82,000 UNIQUE nodes (which is an interesting 
+observation in itself). The javascript branch of this project contains
+the code used to visualize this set of data in the browser, and is 
+adapted from [allnpmviz3d](https://github.com/anvaka/allnpmviz3d)
+with a couple of modifications, namely color. 
+
+In this visualization, the color represents the click level, so
+the red sphere is the final page (Adolf Hitler), the yellow color 
+is the third page, the green is the second page, and the blue is the random page. 
+
+This interactive visualization can be found at [https://lharri73.github.io/wikipediaProject/](https://lharri73.github.io/wikipediaProject/).
+
 ## Building From Source
 
 This project was created using the C++98 standard, but with the addition of multithreading, the libraries added in C++11 made this significantly easier. 
