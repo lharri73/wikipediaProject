@@ -82,6 +82,13 @@ Gumbo repository](https://github.com/google/gumbo-parser), but I'll leave the sp
 
 - NOTE: `--ram` Does not set a hard limit. The program will not create threads until memory usage is below 50% of this number.
 
+## Contributions
+
+Feel free to do your own experimentation and create pull requests as necessary! 
+
+If you find some interesting results, or generate a significant number of entries that 
+can be added to my table of "Adolf Hitler" paths, [send me an email](mailto:lharri73@vols.utk.edu)!
+
 ## License 
 
 GPLv2
