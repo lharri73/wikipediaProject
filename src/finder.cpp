@@ -84,14 +84,21 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
                 nextPage = page->get_sub_page(page->links[i]);
             }catch(string s){
                 sigInt = true;
+                delete nextPage;
                 return false;
             }
 
-            if(nextPage->name == "") continue;
+            if(nextPage->name == ""){
+                delete nextPage;
+                continue;
+            }
             
             if(find_hitler_recursive(n+1, nextPage, path)){
                 path[n+1] = page->links[i].get_title();
+                delete nextPage;
                 return true;
+           }else{
+               delete nextPage;
            }
        }
    }

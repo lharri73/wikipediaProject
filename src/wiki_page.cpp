@@ -9,9 +9,6 @@ Page::Page(string page_name, GumboOutput* Output, string Filename){
 
 Page::~Page(){
     gumbo_destroy_output(&kGumboDefaultOptions, output);
-    for(size_t i = 0; i < pages.size(); i++){
-        delete pages[i];
-    }
     remove(fileName.c_str());
 }
 
@@ -83,6 +80,5 @@ Page* Page::get_sub_page(Link &link){
 
     const string title = find_title(output->root);
     Page *cur_page = new Page(title, output, root_page);
-    pages.push_back(cur_page);
     return cur_page;
 }
