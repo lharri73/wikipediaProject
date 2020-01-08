@@ -1,4 +1,4 @@
-CFLAGS ?= -std=c++11 -g -rdynamic -Wall -Wextra -Wpedantic -Iinclude -lstdc++fs
+CFLAGS ?= -std=c++11 -g -rdynamic -Wall -Wextra -Wpedantic -Iinclude
 LFLAGS := -lgumbo -lmysqlcppconn -pthread
 
 # ------------------------
