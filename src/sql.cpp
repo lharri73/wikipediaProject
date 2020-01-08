@@ -85,7 +85,7 @@ bool SQLConnector::query_table(string name, int n){
     
 }
 
-bool SQLConnector::find_existing(const vector<string> &vec, const std::string &name, int n, int* dist_to_goal){
+vector<string> SQLConnector::find_existing(const vector<string> &vec, const std::string &name, int n){
     if(vec.size() < 3)
         throw (string)"Bad vector was provided to SQLConnector::find_existing\n";
     for(size_t i = 0; i < vec.size(); i++){
@@ -102,22 +102,42 @@ bool SQLConnector::find_existing(const vector<string> &vec, const std::string &n
         // Now we determine the distance to the goal
         switch(path_size){
             case 1:
+				// must be [name, goal_page]
                 *dist_to_goal = 1;
+				*name_index = 0;
                 break;
             case 2:
-                if(vec[2] == name){
+                if(vec[1] == name){
+					// ["garbage", name, goal_page]
                     *dist_to_goal = 1;
+					*name_index = 1;
                 }else{
+					// [name, "garbage", goal_page]
                     *dist_to_goal = 2;
+					*name_index = 0;
                 }
                 break;
             case 3:
-                if(vec[])
-
+                if(vec[0] == name){
+					// [name, "garbage", "garbage", goal_page]
+					*dist_to_goal = 3;
+					*name_index = 0;
+				}else if(vec[1] == name){
+					// ["garbage", name, "garbage", goal_page]
+					*dist_to_goal = 2;
+					*name_index = 1;
+				}else{
+					// ["garbage", "garbage", name, goal_page]
+					*dist_to_goal = 1;
+					*name_index = 2;
+				}
+				break;
+			// no default
         }
-
     }
-
+	if(*dist_to_goal >= 3-n){
+		cout << "here\n";
+	}
 
 }
 
