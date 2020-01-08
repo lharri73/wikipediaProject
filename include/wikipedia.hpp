@@ -105,7 +105,7 @@ class SQLConnector{
 
         void write_negative(std::string &name);
         void write_positive(std::string &first, std::string &second, std::string &third, std::string &fourth);
-        bool find_existing(const std::vector<std::string> &vec, const std::string &name, int n, int* goal);
+        std::vector<std::string> find_existing(const std::vector<std::string> &vec, const std::string &name, int n);
 };
 
 class Finder{

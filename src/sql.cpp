@@ -74,18 +74,16 @@ bool SQLConnector::query_table(string name, int n){
             vec.push_back(tmp);
         }
     }
-    map<int,int> matches;                                   //<index, length>
-    int* name_pos;                                          // this allows the find_existing function
-    int* dist_to_goal;
-                                                            // to return the distance as well as a bool
+
     for(size_t i = 0; i < vec.size(); i++){
-        find_existing(vec[i], name, n, dist_to_goal);
+        find_existing(vec[i], name, n);
     }
     return false;
     
 }
 
 vector<string> SQLConnector::find_existing(const vector<string> &vec, const std::string &name, int n){
+    int dist_to_goal, name_index;
     if(vec.size() < 3)
         throw (string)"Bad vector was provided to SQLConnector::find_existing\n";
     for(size_t i = 0; i < vec.size(); i++){
@@ -103,39 +101,39 @@ vector<string> SQLConnector::find_existing(const vector<string> &vec, const std:
         switch(path_size){
             case 1:
 				// must be [name, goal_page]
-                *dist_to_goal = 1;
-				*name_index = 0;
+                dist_to_goal = 1;
+				name_index = 0;
                 break;
             case 2:
                 if(vec[1] == name){
 					// ["garbage", name, goal_page]
-                    *dist_to_goal = 1;
-					*name_index = 1;
+                    dist_to_goal = 1;
+					name_index = 1;
                 }else{
 					// [name, "garbage", goal_page]
-                    *dist_to_goal = 2;
-					*name_index = 0;
+                    dist_to_goal = 2;
+					name_index = 0;
                 }
                 break;
             case 3:
                 if(vec[0] == name){
 					// [name, "garbage", "garbage", goal_page]
-					*dist_to_goal = 3;
-					*name_index = 0;
+					dist_to_goal = 3;
+					name_index = 0;
 				}else if(vec[1] == name){
 					// ["garbage", name, "garbage", goal_page]
-					*dist_to_goal = 2;
-					*name_index = 1;
+					dist_to_goal = 2;
+					name_index = 1;
 				}else{
 					// ["garbage", "garbage", name, goal_page]
-					*dist_to_goal = 1;
-					*name_index = 2;
+					dist_to_goal = 1;
+					name_index = 2;
 				}
 				break;
 			// no default
         }
     }
-	if(*dist_to_goal >= 3-n){
+	if(dist_to_goal >= 3-n){
 		cout << "here\n";
 	}
 
