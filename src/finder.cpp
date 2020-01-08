@@ -76,6 +76,14 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
             return true;
         }
     }
+
+    if(sql_connection->query_table(page->name, n)){
+        cout <<"here\n";
+    }
+
+    // query the SQL table to see if we've already found a path for
+    // this page. If so, return that path. 
+
    // don't do this on the last iteration
    Page* nextPage;
    if(n != MAX){
@@ -104,10 +112,6 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
    }
     return false;
 }
-void Finder::write_result(string* result){
-    cerr << "Don't use this function\n";
-    sql_connection->write(result);
-}
 
 void Finder::begin(){
     string * path = new string[4];
@@ -130,7 +134,7 @@ void Finder::begin(){
         path[1] = current_page->name;
         if(!sigInt){
             sql_connection->write(path);
-	}
+        }
     }
     delete [] path;
 }

@@ -80,7 +80,7 @@ Gumbo repository](https://github.com/google/gumbo-parser), but I'll leave the sp
 | `--sql_pass XXX`   | Set the password of the MySQL server  | ""        |
 | `--ram #.#`        | Set the amount of ram to use (in GB)  | 8.0       |
 
-- NOTE: `--ram` Does not set a hard limit. The program will not create threads until memory usage is below 50% of this number.
+- NOTE: `--ram` Does not set a hard limit. The program will not create threads until memory usage is below 75% of this number.
 
 ## Contributions
 

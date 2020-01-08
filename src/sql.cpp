@@ -2,8 +2,6 @@
 
 using namespace std;
 
-void escape_special(string &s);
-
 mutex get_driver_mutex;
 
 SQLConnector::SQLConnector(string ip, string user, string pass){
@@ -28,6 +26,7 @@ SQLConnector::SQLConnector(string ip, string user, string pass){
 SQLConnector::~SQLConnector(){
     delete con;
     delete stmt;
+    delete res;
 }
 
 void SQLConnector::write(string *result){
@@ -41,7 +40,7 @@ void SQLConnector::write(string *result){
 void SQLConnector::write_negative(string &name){
     lock_guard<mutex> guard(get_driver_mutex);
     escape_special(name);
-    stmt->execute("INSERT INTO negative(name) VALUES ('" + name + "')");
+    // stmt->execute("INSERT INTO negative(name) VALUES ('" + name + "')");
 }
 
 void SQLConnector::write_positive(string &first, string &second, string &third, string &fourth){
@@ -53,7 +52,73 @@ void SQLConnector::write_positive(string &first, string &second, string &third, 
     escape_special(fourth);
     char command[255*4+30];
     sprintf(command, "INSERT INTO positive(first, second, third, fourth) VALUES ('%s', '%s', '%s', '%s')", first.c_str(), second.c_str(), third.c_str(), fourth.c_str());
-    stmt->execute(string(command));
+    // stmt->execute(string(command));
+}
+
+bool SQLConnector::query_table(string name, int n){
+    
+    lock_guard<mutex> guard(get_driver_mutex);
+    escape_special(name);
+    char command[255*3+30];
+    sprintf(command, "SELECT * FROM positive WHERE first = '%s' OR second = '%s' OR third = '%s'", name.c_str(), name.c_str(), name.c_str());
+    res = stmt->executeQuery(string(command));
+
+    vector< vector<string>> vec;
+    if(res->rowsCount() != 0) {
+        while(res->next()){
+            vector<string> tmp;
+            tmp.push_back(res->getString("first"));
+            tmp.push_back(res->getString("second"));
+            tmp.push_back(res->getString("third"));
+            tmp.push_back(res->getString("fourth"));
+            vec.push_back(tmp);
+        }
+    }
+    map<int,int> matches;                                   //<index, length>
+    int* name_pos;                                          // this allows the find_existing function
+    int* dist_to_goal;
+                                                            // to return the distance as well as a bool
+    for(size_t i = 0; i < vec.size(); i++){
+        find_existing(vec[i], name, n, dist_to_goal);
+    }
+    return false;
+    
+}
+
+bool SQLConnector::find_existing(const vector<string> &vec, const std::string &name, int n, int* dist_to_goal){
+    if(vec.size() < 3)
+        throw (string)"Bad vector was provided to SQLConnector::find_existing\n";
+    for(size_t i = 0; i < vec.size(); i++){
+        // First determine the size of the vector
+        int path_size;
+        if(vec[3] == "" && vec[2] == ""){
+            path_size = 1;
+        }else if(vec[3] == ""){
+            path_size = 2;
+        }else{
+            path_size = 3;
+        }
+
+        // Now we determine the distance to the goal
+        switch(path_size){
+            case 1:
+                *dist_to_goal = 1;
+                break;
+            case 2:
+                if(vec[2] == name){
+                    *dist_to_goal = 1;
+                }else{
+                    *dist_to_goal = 2;
+                }
+                break;
+            case 3:
+                if(vec[])
+
+        }
+
+    }
+
+
 }
 
 void escape_special(string &s){

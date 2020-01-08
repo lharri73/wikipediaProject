@@ -37,5 +37,5 @@ obj/threadpool.o: src/threadpool.cpp include/thread_pool.hpp include/wikipedia.h
 # -------------------------
 # Executables
 
-bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o obj/threadpool.o include/thread_pool.hpp include/wikipedia.hpp
+bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o obj/threadpool.o
 	g++ $(CFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/sql.o obj/threadpool.o $(LFLAGS)

@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include <experimental/filesystem>
 #include <glob.h>
@@ -85,7 +86,6 @@ class Page{
         GumboOutput *output;
         std::string fileName;
 
-        std::vector <Page*> pages;
     private:
         bool get_links_recursive(GumboNode *node);
 };
@@ -96,13 +96,16 @@ class SQLConnector{
         SQLConnector(std::string ip, std::string user, std::string pass);
         ~SQLConnector();
         void write(std::string *result);
+        bool query_table(std::string name, int max_depth);
     protected:
         sql::Driver *driver;
         sql::Connection *con;
         sql::Statement *stmt;
+        sql::ResultSet  *res;
 
         void write_negative(std::string &name);
         void write_positive(std::string &first, std::string &second, std::string &third, std::string &fourth);
+        bool find_existing(const std::vector<std::string> &vec, const std::string &name, int n, int* goal);
 };
 
 class Finder{
@@ -145,3 +148,4 @@ void handler(int sig);
 void mem_usage(double &vm_usage, double& resident_set);
 
 args parse_args(int argc, char** argv);
+void escape_special(std::string &s);
