@@ -8,9 +8,9 @@ all: bin/wikipedia \
 
 
 setup: 
-	sudo apt install libtool automake libmysqlcppconn-dev \
-	git submodule init \
-	git submodule update \
+	sudo apt install libtool automake libmysqlcppconn-dev 
+	git submodule init 
+	git submodule update 
 	cd lib/gumbo && ./autogen.sh && ./configure && make && sudo make install
 
 # -------------------------
