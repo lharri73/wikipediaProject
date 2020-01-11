@@ -55,7 +55,7 @@ void SQLConnector::write_positive(string &first, string &second, string &third, 
     // stmt->execute(string(command));
 }
 
-bool SQLConnector::query_table(string name, int n){
+bool SQLConnector::query_table(string name, int n, vector<string> *retVec){
     
     lock_guard<mutex> guard(get_driver_mutex);
     escape_special(name);
@@ -74,11 +74,33 @@ bool SQLConnector::query_table(string name, int n){
             vec.push_back(tmp);
         }
     }
-
+	vector <string> tmp;
+	size_t min_size;
+	int min_index;
+	min_size = 100;
+	min_index = -1;
+	vector <vector <string> > results;
     for(size_t i = 0; i < vec.size(); i++){
-        find_existing(vec[i], name, n);
+        tmp = find_existing(vec[i], name, n);
+		results.push_back(tmp);
+		if(tmp.size() == 0) continue;
+		if(tmp.size() < min_size){
+			min_size = tmp.size();
+			min_index = i;
+		}
     }
-    return false;
+
+	if(min_index == -1){
+		retVec = nullptr;
+		return false;
+	}
+
+	retVec = new vector<string>;
+
+	for(size_t i = 0; i < results[min_index].size(); i++){
+		retVec->push_back(results[min_index][i]);
+	}
+    return true;
     
 }
 
@@ -133,10 +155,15 @@ vector<string> SQLConnector::find_existing(const vector<string> &vec, const std:
 			// no default
         }
     }
-	if(dist_to_goal >= 3-n){
-		cout << "here\n";
+
+	vector<string> ret;
+	if(dist_to_goal + n <= 3){
+		for(int i = 0; i < dist_to_goal; i++){
+			ret.push_back(vec[i+name_index]);
+		}
 	}
 
+	return ret;
 }
 
 void escape_special(string &s){

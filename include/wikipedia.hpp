@@ -96,7 +96,7 @@ class SQLConnector{
         SQLConnector(std::string ip, std::string user, std::string pass);
         ~SQLConnector();
         void write(std::string *result);
-        bool query_table(std::string name, int max_depth);
+        bool query_table(std::string name, int max_depth, std::vector<std::string> *retVec);
     protected:
         sql::Driver *driver;
         sql::Connection *con;
