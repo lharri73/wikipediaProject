@@ -40,7 +40,7 @@ void SQLConnector::write(string *result){
 void SQLConnector::write_negative(string &name){
     lock_guard<mutex> guard(get_driver_mutex);
     escape_special(name);
-    // stmt->execute("INSERT INTO negative(name) VALUES ('" + name + "')");
+    stmt->execute("INSERT INTO negative(name) VALUES ('" + name + "')");
 }
 
 void SQLConnector::write_positive(string &first, string &second, string &third, string &fourth){
@@ -52,28 +52,31 @@ void SQLConnector::write_positive(string &first, string &second, string &third, 
     escape_special(fourth);
     char command[255*4+30];
     sprintf(command, "INSERT INTO positive(first, second, third, fourth) VALUES ('%s', '%s', '%s', '%s')", first.c_str(), second.c_str(), third.c_str(), fourth.c_str());
-    // stmt->execute(string(command));
+    stmt->execute(string(command));
 }
 
 bool SQLConnector::query_table(string name, int n, vector<string> *retVec){
     
-    lock_guard<mutex> guard(get_driver_mutex);
-    escape_special(name);
-    char command[255*3+30];
-    sprintf(command, "SELECT * FROM positive WHERE first = '%s' OR second = '%s' OR third = '%s'", name.c_str(), name.c_str(), name.c_str());
-    res = stmt->executeQuery(string(command));
-
-    vector< vector<string>> vec;
-    if(res->rowsCount() != 0) {
-        while(res->next()){
-            vector<string> tmp;
-            tmp.push_back(res->getString("first"));
-            tmp.push_back(res->getString("second"));
-            tmp.push_back(res->getString("third"));
-            tmp.push_back(res->getString("fourth"));
-            vec.push_back(tmp);
-        }
-    }
+	vector< vector<string>> vec;
+	char command[255*3+30];
+	if(true){ //this is so the guard will fall out of scope and stop protecting
+			  // the mutex
+	    lock_guard<mutex> guard(get_driver_mutex);
+	    escape_special(name);
+	    sprintf(command, "SELECT * FROM positive WHERE first = '%s' OR second = '%s' OR third = '%s'", name.c_str(), name.c_str(), name.c_str());
+	    res = stmt->executeQuery(string(command));
+	
+	    if(res->rowsCount() != 0) {
+	        while(res->next()){
+	            vector<string> tmp;
+	            tmp.push_back(res->getString("first"));
+	            tmp.push_back(res->getString("second"));
+	            tmp.push_back(res->getString("third"));
+	            tmp.push_back(res->getString("fourth"));
+				vec.push_back(tmp);
+			}
+		}
+	}
 	vector <string> tmp;
 	size_t min_size;
 	int min_index;

@@ -80,6 +80,7 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
     if(sql_connection->query_table(page->name, n, retVec)){
 		for(int i = 0;n < 3; n++){
 			path[n] = retVec->at(i++);
+			if(i == (int)retVec->size()) break;
 		}
 		path[n] = goal_page;
 		return true;
