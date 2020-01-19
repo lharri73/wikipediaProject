@@ -76,20 +76,19 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
             return true;
         }
     }
-	vector<string> *retVec = nullptr;
+	vector<string> *retVec = new vector<string>;
     if(sql_connection->query_table(page->name, n, retVec)){
-		cout << "size: " << retVec->size() << '\n';
+		cerr << retVec << '\n';
+		cerr << "size: " << retVec->size() << '\n';
 		for(int i = 0;n < 3; n++){
-			cout << "setting " << n << '\n';
-			cout << "\tvalue: " << retVec->at(i) << '\n';
+			cerr << "setting " << n << '\n';
+			cerr << "\tvalue: " << retVec->at(i) << '\n';
 			path[n] = retVec->at(i++);
 		}
 		return true;
     }
 
-	if(retVec != nullptr){
-		delete retVec;
-	}
+	delete retVec;
     // query the SQL table to see if we've already found a path for
     // this page. If so, return that path. 
 

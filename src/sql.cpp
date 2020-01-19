@@ -91,11 +91,9 @@ bool SQLConnector::query_table(string name, int n, vector<string> *retVec){
     }
 
 	if(min_index == -1){
-		retVec = nullptr;
 		return false;
 	}
 
-	retVec = new vector<string>;
 
 	for(size_t i = 0; i < results[min_index].size(); i++){
 		retVec->push_back(results[min_index][i]);
