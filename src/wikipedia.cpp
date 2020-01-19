@@ -21,7 +21,9 @@ int main(int argc, char** argv){
     args Args = parse_args(argc, argv);
     if(Args.singleThread){
         Finder *finder = new Finder(Args);
-        finder->begin();
+		while(true){
+			finder->begin();
+		}
         delete finder;
     }else{
         cleanup();
