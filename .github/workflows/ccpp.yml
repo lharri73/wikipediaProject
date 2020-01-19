@@ -3,7 +3,7 @@ name: C/C++ CI
 on:
   push:
     branches: 
-      - c++
+      - 'c\+\+'
 jobs:
   build:
 
@@ -15,4 +15,3 @@ jobs:
       run: make setup
     - name: make
       run: make
-
