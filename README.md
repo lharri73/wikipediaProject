@@ -75,6 +75,7 @@ Gumbo repository](https://github.com/google/gumbo-parser), but I'll leave the sp
 | Flag               | Description                           | Default   |
 |--------------------|---------------------------------------|-----------|
 | `--single`         | Disable multithreading                | False     |
+| `--debug`          | Run a single iteration on random page | False     |
 | `--sql_ip #.#.#.#` | Set the ip of the MySQL server        | 127.0.0.1 |
 | `--sql_user XXX`   | Set the user of the MySQL server      | root      |
 | `--sql_pass XXX`   | Set the password of the MySQL server  | ""        |

@@ -19,6 +19,11 @@ int main(int argc, char** argv){
         exit(0);
     }
     args Args = parse_args(argc, argv);
+	if(Args.debug){
+		Finder *finder = new Finder(Args);
+		finder->begin();
+		delete finder;
+	}
     if(Args.singleThread){
         Finder *finder = new Finder(Args);
 		while(true){
@@ -114,6 +119,9 @@ args parse_args(int argc, char** argv){
         if(argv[i] == string("--single"))
             ret.singleThread = true;
 
+		if(argv[i] == string("--debug"))
+			ret.singleThread = true;
+
         if(argv[i] == string("--sql_ip")){
             if(argc == i){
                 cout << "must specify ip following '--sql_ip'\n";
@@ -176,4 +184,5 @@ args::args(){
     mysql_user = "root";
     mysql_pass = "";
     resultsFile = "";
+	debug = false;
 }

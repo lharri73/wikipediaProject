@@ -62,6 +62,7 @@ struct args{
         int max_n;
         double ramAmount;
         bool singleThread;
+		bool debug;
 
         bool useSql;
         std::string mysql_ip;
