@@ -23,6 +23,23 @@ bool Page::get_links_recursive(GumboNode *node){
     }
 
     // stop looking at class=navbox-list
+    GumboAttribute* classTag;
+    if(node->v.element.tag == GUMBO_TAG_TABLE){
+        classTag = gumbo_get_attribute(&node->v.element.attributes, "class");
+        string result;
+
+        if(classTag == NULL){
+            result = "";
+        }else{
+            result = classTag->value;
+        }
+
+        if(result.find("infobox") != string::npos || \
+                result.find("navbox-list") != string::npos || \
+                result.find("navbox") != string::npos){
+            return true;
+        }
+    }
 
     GumboAttribute* href;
     if (node->v.element.tag == GUMBO_TAG_A &&
@@ -42,8 +59,8 @@ bool Page::get_links_recursive(GumboNode *node){
                result.find("File:") == string::npos && \
                result.find("/wiki/") == 0){
                 GumboAttribute* title = gumbo_get_attribute(&node->v.element.attributes, "title");
-                if(title){
-                    links.push_back(Link(href->value, title->value));
+                if(title && title->value != string("") && string(title->value).find("Template talk:") == string::npos){
+                    links.insert(Link(href->value, title->value));
                 }
             }
     }

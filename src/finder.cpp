@@ -69,10 +69,10 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
         path[n+1] = goal_page;
         return true;
     }
-
-    for(size_t i = 0; i < page->links.size(); i++){
-        if(page->links[i].get_title() == goal_page){
-            path[n+1] = page->links[i].get_title();
+    set<Link>::iterator linkIt;
+    for(linkIt = page->links.begin(); linkIt != page->links.end(); linkIt++){
+        if(linkIt->get_title() == goal_page){
+            path[n+1] = linkIt->get_title();
             return true;
         }
     }
@@ -98,9 +98,10 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
    // don't do this on the last iteration
    Page* nextPage;
    if(n != MAX){
-       for(size_t i = 0; i < page->links.size() && !sigInt; i++){
+       for(linkIt = page->links.begin(); linkIt != page->links.end() && !sigInt; linkIt++){
             try{
-                nextPage = page->get_sub_page(page->links[i]);
+                Link tmp = *linkIt;
+                nextPage = page->get_sub_page(tmp);
             }catch(string s){
                 sigInt = true;
                 delete nextPage;
@@ -113,7 +114,7 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
             }
             
             if(find_hitler_recursive(n+1, nextPage, path)){
-                path[n+1] = page->links[i].get_title();
+                path[n+1] = linkIt->get_title();
                 delete nextPage;
                 return true;
            }else{

@@ -46,7 +46,7 @@ void SQLConnector::write_negative(string &name){
 
 void SQLConnector::write_positive(string &first, string &second, string &third, string &fourth){
     if(first != goal_page && second != goal_page && third != goal_page && fourth != goal_page){
-        throw (string)"positive results does not contain the goal page!\n\tPossible contamination of SQL database!!";
+        cerr << "positive results does not contain the goal page!\n\tPossible contamination of SQL database!!\n";
         exit(-1);
         return;
     }

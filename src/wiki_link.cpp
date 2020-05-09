@@ -14,3 +14,7 @@ const string Link::get_href() const{
 const string Link::get_title() const{
     return title;
 }
+
+bool operator<(const Link &l1, const Link &l2){
+    return l1.href < l2.href;
+}
