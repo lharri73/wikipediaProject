@@ -22,6 +22,8 @@ bool Page::get_links_recursive(GumboNode *node){
         return true;
     }
 
+    // stop looking at class=navbox-list
+
     GumboAttribute* href;
     if (node->v.element.tag == GUMBO_TAG_A &&
         (href = gumbo_get_attribute(&node->v.element.attributes, "href"))) {

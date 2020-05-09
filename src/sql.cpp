@@ -44,7 +44,7 @@ void SQLConnector::write_negative(string &name){
 }
 
 void SQLConnector::write_positive(string &first, string &second, string &third, string &fourth){
-	
+	// TODO: add protection to prevent bad results from being written
     lock_guard<mutex> guard(get_driver_mutex);
     escape_special(first);
     escape_special(second);
@@ -98,10 +98,12 @@ bool SQLConnector::query_table(string &name, int n, vector<string> *retVec){
 	if(min_index == -1){
 		return false;
 	}
-
+    cout << "found in table\n";
 	for(size_t i = 0; i < results[min_index].size(); i++){
+        cout << results[min_index][i] << " ";
 		retVec->push_back(results[min_index][i]);
 	}
+    cout << '\n';
     return true;
     
 }

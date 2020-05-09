@@ -13,3 +13,5 @@ obj/*
 !obj/.keep
 results/*
 .vscode
+
+*.swp

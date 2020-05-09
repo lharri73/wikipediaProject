@@ -8,8 +8,8 @@ Finder::Finder(args Args){
     random_url = "https://en.wikipedia.org/wiki/Special:Random";
 
     // values used for testing
-    // random_url = "https://en.wikipedia.org/wiki/United_States";
-    // random_url = "https://en.wikipedia.org/wiki/World_war";
+    //random_url = "https://en.wikipedia.org/wiki/United_States";
+    //random_url = "https://en.wikipedia.org/wiki/World_war";
     
     hasRun = false;
     sigInt = false;
@@ -82,7 +82,12 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
 			path[n] = retVec->at(i++);
 			if(i == (int)retVec->size()) break;
 		}
-		path[n] = goal_page;
+		path[n+1] = goal_page;
+        cout << "found in sql table\n";
+        for(size_t i = 0; i < retVec->size(); i++){
+            cout << retVec->at(i) << " ";
+        }
+        cout << '\n';
 		return true;
     }
 
