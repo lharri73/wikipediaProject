@@ -55,7 +55,7 @@ void SQLConnector::write_positive(string &first, string &second, string &third, 
     stmt->execute(string(command));
 }
 
-bool SQLConnector::query_table(string name, int n, vector<string> *retVec){
+bool SQLConnector::query_table(string &name, int n, vector<string> *retVec){
     
 	vector< vector<string>> vec;
 	char command[255*3+30];
@@ -77,6 +77,8 @@ bool SQLConnector::query_table(string name, int n, vector<string> *retVec){
 			}
 		}
 	}
+
+	// find the shortest path to the goal page
 	vector <string> tmp;
 	size_t min_size;
 	int min_index;
@@ -97,7 +99,6 @@ bool SQLConnector::query_table(string name, int n, vector<string> *retVec){
 		return false;
 	}
 
-
 	for(size_t i = 0; i < results[min_index].size(); i++){
 		retVec->push_back(results[min_index][i]);
 	}
@@ -106,6 +107,10 @@ bool SQLConnector::query_table(string name, int n, vector<string> *retVec){
 }
 
 vector<string> SQLConnector::find_existing(const vector<string> &vec, const std::string &name, int n){
+	// find a path in the database given a page name
+	// this function formats the 
+
+
     int dist_to_goal, name_index;
     if(vec.size() < 3)
         throw (string)"Bad vector was provided to SQLConnector::find_existing\n";

@@ -34,7 +34,9 @@ bool Page::get_links_recursive(GumboNode *node){
             if(result.find("Wikipedia:") == string::npos && \
                result.find("Special:") == string::npos && \
                result.find("Help:") == string::npos && \
-               result.find("Templage:") == string::npos && \
+               result.find("Template:") == string::npos && \
+               result.find("Template talk:") == string::npos && \
+               result.find("User:") == string::npos && \
                result.find("File:") == string::npos && \
                result.find("/wiki/") == 0){
                 GumboAttribute* title = gumbo_get_attribute(&node->v.element.attributes, "title");
