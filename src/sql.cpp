@@ -4,8 +4,9 @@ using namespace std;
 
 mutex get_driver_mutex;
 
-SQLConnector::SQLConnector(string ip, string user, string pass){
+SQLConnector::SQLConnector(string ip, string user, string pass, string goalPage){
     lock_guard<mutex> guard(get_driver_mutex);
+    goal_page = goalPage;
     driver =  get_driver_instance();
     con = driver->connect("tcp://" + ip + ":3306", user, pass);
     stmt = con->createStatement();
@@ -44,7 +45,11 @@ void SQLConnector::write_negative(string &name){
 }
 
 void SQLConnector::write_positive(string &first, string &second, string &third, string &fourth){
-	// TODO: add protection to prevent bad results from being written
+    if(first != goal_page && second != goal_page && third != goal_page && fourth != goal_page){
+        throw (string)"positive results does not contain the goal page!\n\tPossible contamination of SQL database!!";
+        exit(-1);
+        return;
+    }
     lock_guard<mutex> guard(get_driver_mutex);
     escape_special(first);
     escape_special(second);

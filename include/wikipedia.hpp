@@ -36,26 +36,11 @@ class Link{
         const std::string get_href() const;
         const std::string get_title() const;
     protected:
-        std::string href;struct args{
-    public:
-        args();
-        std::string goal_page;
-        int max_n;
-        double ramAmount;
-        bool singleThread;
-
-        bool useSql;
-        std::string mysql_ip;
-        std::string mysql_user;
-        std::string mysql_pass;
-
-        std::string resultsFile;
-
-};
+        std::string href;
         std::string title;
 };
 
-struct args{
+class args{
     public:
         args();
         std::string goal_page;
@@ -94,11 +79,12 @@ class Page{
 class SQLConnector{
     public:
         // sql::ResultSet *res;
-        SQLConnector(std::string ip, std::string user, std::string pass);
+        SQLConnector(std::string ip, std::string user, std::string pass, std::string goalPage);
         ~SQLConnector();
         void write(std::string *result);
         bool query_table(std::string &name, int max_depth, std::vector<std::string> *retVec);
     protected:
+        std::string goal_page;
         sql::Driver *driver;
         sql::Connection *con;
         sql::Statement *stmt;

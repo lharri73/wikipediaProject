@@ -1,7 +1,7 @@
 #include "wikipedia.hpp"
 using namespace std;
 Finder::Finder(args Args){
-    sql_connection = new SQLConnector(Args.mysql_ip, Args.mysql_user, Args.mysql_pass);
+    sql_connection = new SQLConnector(Args.mysql_ip, Args.mysql_user, Args.mysql_pass, Args.goal_page);
     MAX = Args.max_n-1;
     goal_page = Args.goal_page;
     pages_folder = "pages";
