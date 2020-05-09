@@ -24,11 +24,11 @@ ThreadPool::ThreadPool(size_t threads, args Args, volatile sig_atomic_t &gSignal
             if(!threadVec[i]->isRunning()){
                 oldThread = threadVec[i];
                 if(threadVec[i]->isSigint()){
-		    gSignalStatus = 2;
+		            gSignalStatus = 2;
                 }
                 threadVec.erase(threadVec.begin() + i);
                 delete oldThread;
-		i--;
+		        i--;
             }
         }
     }
@@ -68,6 +68,7 @@ Thread::~Thread(){
 
 void multithread_start(Finder* finder, bool* running, bool* sigint){
     *running = true;
+    // TODO: try this in a while loop. this will cause us to not create the connected every time
     finder->begin();
     *running = false;
     if(finder->sigInt)
