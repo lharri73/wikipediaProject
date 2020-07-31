@@ -1,7 +1,7 @@
 #include "wikipedia.hpp"
 using namespace std;
 Finder::Finder(args Args){
-    sql_connection = new SQLConnector(Args.mysql_ip, Args.mysql_user, Args.mysql_pass, Args.goal_page);
+    //sql_connection = new SQLConnector(Args.mysql_ip, Args.mysql_user, Args.mysql_pass, Args.goal_page);
     MAX = Args.max_n-1;
     goal_page = Args.goal_page;
     pages_folder = "pages";
@@ -16,7 +16,7 @@ Finder::Finder(args Args){
 }
 
 Finder::~Finder(){
-    delete sql_connection;
+    //delete sql_connection;
     if(hasRun)
         delete current_page;
 }
@@ -77,19 +77,19 @@ bool Finder::find_hitler_recursive(int n, Page *page, string path[]){
         }
     }
 	vector<string> *retVec = new vector<string>;
-    if(sql_connection->query_table(page->name, n, retVec)){
-		for(int i = 0;n < 3; n++){
-			path[n] = retVec->at(i++);
-			if(i == (int)retVec->size()) break;
-		}
-		path[n+1] = goal_page;
-        cout << "found in sql table\n";
-        for(size_t i = 0; i < retVec->size(); i++){
-            cout << retVec->at(i) << " ";
-        }
-        cout << '\n';
-		return true;
-    }
+    // if(sql_connection->query_table(page->name, n, retVec)){
+	// 	for(int i = 0;n < 3; n++){
+	// 		path[n] = retVec->at(i++);
+	// 		if(i == (int)retVec->size()) break;
+	// 	}
+	// 	path[n+1] = goal_page;
+    //     cout << "found in sql table\n";
+    //     for(size_t i = 0; i < retVec->size(); i++){
+    //         cout << retVec->at(i) << " ";
+    //     }
+    //     cout << '\n';
+	// 	return true;
+    // }
 
 	delete retVec;
     // query the SQL table to see if we've already found a path for
@@ -140,12 +140,12 @@ void Finder::begin(){
     if(result){
         printf("FOUND: ['%s', '%s', '%s', '%s']\n", current_page->name.c_str(), path[1].c_str(), path[2].c_str(), path[3].c_str());
         path[0] = current_page->name.c_str();
-        sql_connection->write(path);
+        // sql_connection->write(path);
     }else{
         path[0] = "NOT POSSIBLE";
         path[1] = current_page->name;
         if(!sigInt){
-            sql_connection->write(path);
+            //sql_connection->write(path);
         }
     }
     delete [] path;

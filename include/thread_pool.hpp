@@ -3,6 +3,7 @@
 #include "wikipedia.hpp"
 #include <thread>
 #include <condition_variable>
+#include <signal.h>
 
 class Thread{
     public:
@@ -28,3 +29,4 @@ class ThreadPool {
 };
 
 void multithread_start(Finder* finder, bool* running, bool* sigint);
+void mem_usage(double &vm_usage, double& resident_set);
