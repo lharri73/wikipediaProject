@@ -41,6 +41,7 @@ Page* Finder::get_next_file(){
         exit(-1);
     }
 
+    // read the contents of the entire file
     string contents;
     in.seekg(0, ios::end);
     contents.resize(in.tellg());

@@ -3,7 +3,7 @@
 
 using namespace std;
 
-ThreadPool::ThreadPool(size_t threads, args Args, volatile sig_atomic_t &gSignalStatus){
+ThreadPool::ThreadPool(size_t threads, args Args){
     Finder *finder;
     ramAmount = Args.ramAmount;
     for(size_t i = 0; i<threads; i++){
@@ -13,7 +13,8 @@ ThreadPool::ThreadPool(size_t threads, args Args, volatile sig_atomic_t &gSignal
 
     double vRam, ret_usage;
     Thread* oldThread;
-    while(gSignalStatus !=2){
+    bool running = true;
+    while(running){
         mem_usage(vRam, ret_usage);
        	if(vRam < .75 * ramAmount && threadVec.size() < threads){
             finder = new Finder(Args);
@@ -24,7 +25,9 @@ ThreadPool::ThreadPool(size_t threads, args Args, volatile sig_atomic_t &gSignal
             if(!threadVec[i]->isRunning()){
                 oldThread = threadVec[i];
                 if(threadVec[i]->isSigint()){
-		            gSignalStatus = 2;
+                    // may be issues here with sigint
+                    running = false;
+		            break;
                 }
                 threadVec.erase(threadVec.begin() + i);
                 delete oldThread;

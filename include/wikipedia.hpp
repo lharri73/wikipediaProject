@@ -6,9 +6,6 @@
 
 // #include <experimental/filesystem>
 
-
-
-
 // #include <cstdio>
 // #include <stdlib.h> 
 // #include <cstdlib>
@@ -17,12 +14,7 @@
 
 // #include <ios>
 
-
-
 // #include <unistd.h>
-
-
-
 
 // #include "mysql_connection.h"
 
@@ -31,12 +23,8 @@
 // #include <cppconn/resultset.h>
 // #include <cppconn/statement.h>
 
-
 #pragma once
 #include "UUID.hpp"
 #include "Finder.hpp"
+#include "Signals.hpp"
 //#include "SQLConnector.hpp"
-
-
-#include <glob.h>
-#include <execinfo.h>

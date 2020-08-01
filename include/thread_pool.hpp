@@ -3,7 +3,7 @@
 #include "wikipedia.hpp"
 #include <thread>
 #include <condition_variable>
-#include <signal.h>
+// #include <signal.h>
 
 class Thread{
     public:
@@ -20,7 +20,7 @@ class Thread{
 
 class ThreadPool {
     public:
-        ThreadPool(size_t threads, args Args, volatile sig_atomic_t &gSignalStatus);
+        ThreadPool(size_t threads, args Args);
         void add_thread(Finder* finder);
         ~ThreadPool();
     private:

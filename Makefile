@@ -41,8 +41,14 @@ obj/uuid.o: src/uuid.cpp include/wikipedia.hpp include/UUID.hpp
 
 obj/threadpool.o: src/threadpool.cpp include/thread_pool.hpp
 	g++ $(CFLAGS) -c -o obj/threadpool.o src/threadpool.cpp
+
+obj/arg_handler.o: src/arg_handler.cpp include/Args.hpp
+	g++ $(CFLAGS) -c -o obj/arg_handler.o src/arg_handler.cpp
+
+obj/signal_handler.o: src/signal_handler.cpp include/Signals.hpp
+	g++ $(CFLAGS) -c -o obj/signal_handler.o src/signal_handler.cpp
 # -------------------------
 # Executables
 
-bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/threadpool.o
-	g++ $(CFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/threadpool.o $(LFLAGS)
+bin/wikipedia: obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/threadpool.o obj/signal_handler.o obj/arg_handler.o
+	g++ $(CFLAGS) -o bin/wikipedia obj/wiki_link.o obj/wiki_page.o obj/wikipedia.o obj/finder.o obj/uuid.o obj/threadpool.o obj/signal_handler.o obj/arg_handler.o $(LFLAGS)
